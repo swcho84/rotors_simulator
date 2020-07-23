@@ -4,6 +4,7 @@
  * Copyright 2015 Mina Kamel, ASL, ETH Zurich, Switzerland
  * Copyright 2015 Janosch Nikolic, ASL, ETH Zurich, Switzerland
  * Copyright 2015 Markus Achtelik, ASL, ETH Zurich, Switzerland
+ * Copyright 2020 Sungwook Cho, VASRL, Cheongju University, Cheongju, South Korea
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,15 +18,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-#ifndef ROTORS_CONTROL_ROLL_PITCH_YAWRATE_THRUST_CONTROLLER_NODE_H
-#define ROTORS_CONTROL_ROLL_PITCH_YAWRATE_THRUST_CONTROLLER_NODE_H
+#ifndef ROTORS_CONTROL_BODY_VELOCITY_CONTROLLER_NODE_H
+#define ROTORS_CONTROL_BODY_VELOCITY_CONTROLLER_NODE_H
 
 #include <boost/bind.hpp>
 #include <Eigen/Eigen>
 #include <stdio.h>
 
 #include <geometry_msgs/PoseStamped.h>
+
 #include <mav_msgs/RollPitchYawrateThrust.h>
 #include <mav_msgs/Actuators.h>
 #include <nav_msgs/Odometry.h>
@@ -34,35 +35,26 @@
 #include <ros/callback_queue.h>
 
 #include "rotors_control/common.h"
-#include "rotors_control/roll_pitch_yawrate_thrust_controller.h"
+#include "rotors_control/body_velocity_controller.h"
 
 namespace rotors_control {
 
-class RollPitchYawrateThrustControllerNode {
+class BodyVelocityControllerNode {
  public:
-  RollPitchYawrateThrustControllerNode();
-  ~RollPitchYawrateThrustControllerNode();
+  BodyVelocityControllerNode();
+  ~BodyVelocityControllerNode();
 
   void InitializeParams();
   void Publish();
 
  private:
 
-  RollPitchYawrateThrustController roll_pitch_yawrate_thrust_controller_;
+  BodyVelocityController body_velocity_controller_;
 
   std::string namespace_;
 
   // subscribers
-  ros::Subscriber cmd_roll_pitch_yawrate_thrust_sub_;
-  ros::Subscriber odometry_sub_;
-
-  ros::Publisher motor_velocity_reference_pub_;
-
-  void RollPitchYawrateThrustCallback(
-      const mav_msgs::RollPitchYawrateThrustConstPtr& roll_pitch_yawrate_thrust_reference_msg);
-
-  void OdometryCallback(const nav_msgs::OdometryConstPtr& odometry_msg);
 };
 }
 
-#endif // ROTORS_CONTROL_ROLL_PITCH_YAWRATE_THRUST_CONTROLLER_NODE_H
+#endif // ROTORS_CONTROL_BODY_VELOCITY_CONTROLLER_NODE_H

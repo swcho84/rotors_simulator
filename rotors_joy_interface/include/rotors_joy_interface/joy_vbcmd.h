@@ -4,6 +4,7 @@
  * Copyright 2015 Mina Kamel, ASL, ETH Zurich, Switzerland
  * Copyright 2015 Janosch Nikolic, ASL, ETH Zurich, Switzerland
  * Copyright 2015 Markus Achtelik, ASL, ETH Zurich, Switzerland
+ * Copyright 2020 Sungwook Cho, VASRL, Cheongju University, Cheongju, South Korea
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,10 +18,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-
-#ifndef ROTORS_JOY_INTERFACE_JOY_H_
-#define ROTORS_JOY_INTERFACE_JOY_H_
+#ifndef ROTORS_JOY_INTERFACE_JOY_VBCMD_H_
+#define ROTORS_JOY_INTERFACE_JOY_VBCMD_H_
 
 #include <geometry_msgs/PoseStamped.h>
 #include <mav_msgs/RollPitchYawrateThrust.h>
@@ -28,36 +27,23 @@
 #include <sensor_msgs/Joy.h>
 
 struct Axes {
-  int roll;
-  int pitch;
-  int yaw;
-  int thrust;
-  int roll_direction;
-  int pitch_direction;
-  int yaw_direction;
-  int thrust_direction;
-};
-
-struct Buttons {
-  int takeoff;
-  int land;
-  int ctrl_enable;
-  int ctrl_mode;
-  int yaw_left;
-  int yaw_right;
+  int vbx;
+  int vby;
+  int vbz;
+  int yawang;
+  int vbx_direction;
+  int vby_direction;
+  int vbz_direction;
+  int yawang_direction;
 };
 
 struct Max {
-  double v_xy;
-  double roll;
-  double pitch;
-  double rate_yaw;
-  double thrust;
+  double vbx;
+  double vby;
+  double vbz;
 };
 
-class Joy {
-  typedef sensor_msgs::Joy::_buttons_type ButtonType;
-
+class JoyVbCmd {
  private:
   ros::NodeHandle nh_;
   ros::Publisher ctrl_pub_;
@@ -66,26 +52,20 @@ class Joy {
   std::string namespace_;
 
   Axes axes_;
-  Buttons buttons_;
 
   mav_msgs::RollPitchYawrateThrust control_msg_;
-  geometry_msgs::PoseStamped pose_;
   sensor_msgs::Joy current_joy_;
 
   Max max_;
 
-  double current_yaw_vel_;
-  double v_yaw_step_;
+  double current_yaw_ang_;
 
-  bool is_fixed_wing_;
-
-  void StopMav();
-
-  void JoyCallback(const sensor_msgs::JoyConstPtr& msg);
+  void JoyVbCmdCallback(const sensor_msgs::JoyConstPtr& msg);
   void Publish();
 
  public:
-  Joy();
+   JoyVbCmd();
+
 };
 
-#endif // ROTORS_JOY_INTERFACE_JOY_H_
+#endif // ROTORS_JOY_INTERFACE_JOY_VBCMD_H_

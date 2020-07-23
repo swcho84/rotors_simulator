@@ -204,8 +204,44 @@ foreach(ITR ${GAZEBO_INCLUDE_DIRS})
   endif()
 endforeach()
 
+message(${PROTOBUF_IMPORT_DIRS})
+
 # Get lists of all .proto files in the msgs directory
 file(GLOB msgs msgs/*.proto)
+
+#set (msgs
+#     Actuators.proto
+#     BodyVelCmd.proto
+#     CommandMotorSpeed.proto
+#     ConnectGazeboToRosTopic.proto
+#     ConnectRosToGazeboTopic.proto
+#     Float32.proto 
+#     FluidPressure.proto
+#     Header.proto
+#     Imu.proto
+#     JointState.proto
+#     Lidar.proto
+#     MagneticField.proto
+#     NavSatFix.proto
+#     Odometry.proto
+#     OpticalFlow.proto
+#     Point.proto
+#     PointStamped.proto
+#     PoseStamped.proto
+#     PoseWithCovariance.proto
+#     PoseWithCovarianceStamped.proto
+#     RollPitchYawrateThrust.proto
+#     Transform.proto
+#     TransformStamped.proto
+#     TransformStampedWithFrameIds.proto
+#     Twist.proto
+#     TwistStamped.proto
+#     TwistWithCovariance.proto
+#     Vector3dStamped.proto
+#     WindSpeed.proto
+#     Wrench.proto
+#     WrenchStamped.proto
+#)
 
 # Finally, generate the .cpp files from the .proto files
 PROTOBUF_GENERATE_CPP(PROTO_SRCS PROTO_HDRS ${msgs})
