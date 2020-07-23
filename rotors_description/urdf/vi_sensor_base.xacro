@@ -33,7 +33,7 @@
     enable_cameras="$(arg enable_cameras)"
     enable_depth="$(arg enable_depth)"
     enable_ground_truth="$(arg enable_ground_truth)">
-    <origin xyz="0.0 0.0 0.6" rpy="0 0 0" />
+    <origin xyz="0.0 0.0 0.8" rpy="0 0 0" />
   </xacro:vi_sensor_macro>
 
 </robot>
