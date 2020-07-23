@@ -1,0 +1,5 @@
+# body velocity position controller parameters
+p_gain: {vbx: 1.0, vby: 1.0, vbz: 1.0}
+i_gain: {vbx: 0.1, vby: 0.1, vbz: 0.1}
+attitude_gain: {x: 3, y: 3, z: 0.15}
+angular_rate_gain: {x: 0.52, y: 0.52, z: 0.18}

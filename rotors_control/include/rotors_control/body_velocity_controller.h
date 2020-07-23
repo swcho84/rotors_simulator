@@ -29,12 +29,29 @@
 
 namespace rotors_control {
 
-// Default values for the body velocity controller and the Asctec Firefly.
-
+// Default values for the lee position controller and the Asctec Firefly.
+static const Eigen::Vector3d kDefaultPGain = Eigen::Vector3d(1.0, 1.0, 1.0);
+static const Eigen::Vector3d kDefaultIGain = Eigen::Vector3d(0.5, 0.5, 0.5);
+static const Eigen::Vector3d kDefaultAttitudeGain = Eigen::Vector3d(3, 3, 0.035);
+static const Eigen::Vector3d kDefaultAngularRateGain = Eigen::Vector3d(0.52, 0.52, 0.025);
 
 class BodyVelocityControllerParameters {
  public:
+  EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+  BodyVelocityControllerParameters()
+      : p_gain_(kDefaultPGain),
+        i_gain_(kDefaultIGain),
+        attitude_gain_(kDefaultAttitudeGain),
+        angular_rate_gain_(kDefaultAngularRateGain) {
+    calculateAllocationMatrix(rotor_configuration_, &allocation_matrix_);
+  }
 
+  Eigen::Matrix4Xd allocation_matrix_;
+  Eigen::Vector3d p_gain_;
+  Eigen::Vector3d i_gain_;
+  Eigen::Vector3d attitude_gain_;
+  Eigen::Vector3d angular_rate_gain_;
+  RotorConfiguration rotor_configuration_;
 };
 
 class BodyVelocityController {
@@ -42,6 +59,11 @@ class BodyVelocityController {
   BodyVelocityController();
   ~BodyVelocityController();
   void InitializeParameters();
+
+  BodyVelocityControllerParameters controller_parameters_;
+  VehicleParameters vehicle_parameters_;
+
+  EIGEN_MAKE_ALIGNED_OPERATOR_NEW  
 };
 }
 

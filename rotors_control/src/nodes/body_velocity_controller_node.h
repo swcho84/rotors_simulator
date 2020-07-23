@@ -25,10 +25,10 @@
 #include <Eigen/Eigen>
 #include <stdio.h>
 
-#include <geometry_msgs/PoseStamped.h>
-
 #include <mav_msgs/RollPitchYawrateThrust.h>
 #include <mav_msgs/Actuators.h>
+#include <mav_msgs/AttitudeThrust.h>
+#include <mav_msgs/eigen_mav_msgs.h>
 #include <nav_msgs/Odometry.h>
 
 #include <ros/ros.h>
@@ -41,20 +41,29 @@ namespace rotors_control {
 
 class BodyVelocityControllerNode {
  public:
-  BodyVelocityControllerNode();
+  BodyVelocityControllerNode(const ros::NodeHandle& nh, const ros::NodeHandle& private_nh);
   ~BodyVelocityControllerNode();
 
   void InitializeParams();
   void Publish();
 
  private:
-
+  ros::NodeHandle nh_;
+  ros::NodeHandle private_nh_; 
   BodyVelocityController body_velocity_controller_;
 
   std::string namespace_;
 
   // subscribers
+  ros::Subscriber cmd_bodyvel_sub_;
+  ros::Subscriber odometry_sub_;  
+
+  ros::Publisher motor_velocity_reference_pub_;
+
+  void BodyVelCmdCallback(
+      const mav_msgs::RollPitchYawrateThrustConstPtr& body_vel_cmd_reference_msg);
+
+  void OdometryCallback(const nav_msgs::OdometryConstPtr& odometry_msg);    
 };
 }
-
 #endif // ROTORS_CONTROL_BODY_VELOCITY_CONTROLLER_NODE_H

@@ -94,10 +94,12 @@ void LeePositionController::SetTrajectoryPoint(
 void LeePositionController::ComputeDesiredAcceleration(Eigen::Vector3d* acceleration) const {
   assert(acceleration);
 
+  // error dynamics, position error
   Eigen::Vector3d position_error;
   position_error = odometry_.position - command_trajectory_.position_W;
 
   // Transform velocity to world frame.
+  // error dynamics, velocity error
   const Eigen::Matrix3d R_W_I = odometry_.orientation.toRotationMatrix();
   Eigen::Vector3d velocity_W =  R_W_I * odometry_.velocity;
   Eigen::Vector3d velocity_error;
@@ -136,6 +138,7 @@ void LeePositionController::ComputeDesiredAngularAcc(const Eigen::Vector3d& acce
   R_des.col(2) = b3_des;
 
   // Angle error according to lee et al.
+  // error dynamics, attitude
   Eigen::Matrix3d angle_error_matrix = 0.5 * (R_des.transpose() * R - R.transpose() * R_des);
   Eigen::Vector3d angle_error;
   vectorFromSkewMatrix(angle_error_matrix, &angle_error);
