@@ -22,6 +22,26 @@
 <robot xmlns:xacro="http://ros.org/wiki/xacro">
   <xacro:property name="pi" value="3.14159265359" />
 
+  <!-- Macro to add gimbal base link -->
+  <!-- <xacro:macro name="gimbal_macro" params="namespace *origin">
+    <link name="${namespace}/gimbal_base_link">
+      <inertial>
+        <mass value="0.1" />
+        <inertia ixx="1e-4" ixy="0.0" ixz="0.0" iyy="1e-4" iyz="0.0" izz="1e-4" />
+      </inertial>
+    </link>
+    <joint name="${namespace}/gimbal_pitch_joint" type="continuous">
+      <parent link="${namespace}/base_link" />
+      <child link="${namespace}/gimbal_base_link" />
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <axis xyz="0 1 0" />
+    </joint>
+    <gazebo>
+      <plugin name="gimbal_controller" filename="libgimbal_plugin.so">
+      </plugin>
+    </gazebo>
+  </xacro:macro>-->
+
   <!-- Macro to add logging to a bag file. -->
   <xacro:macro name="bag_plugin_macro"
     params="namespace bag_file rotor_velocity_slowdown_sim wait_to_record_bag">

@@ -55,6 +55,11 @@
   <!-- Included URDF Files -->
   <xacro:include filename="$(find rotors_description)/urdf/multirotor_base.xacro" />
 
+  <!-- Included gimbal base link -->
+  <!--<xacro:gimbal_macro namespace="${namespace}">
+    <origin xyz="0 0 -0.5" rpy="0 0 0" />
+  </xacro:gimbal_macro> -->    
+
   <!-- Instantiate multirotor_base_macro once -->
   <xacro:multirotor_base_macro
     robot_namespace="${namespace}"

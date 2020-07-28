@@ -116,6 +116,7 @@ if (NOT NO_ROS)
     rotors_control
     std_srvs
     tf
+    message_generation
   )
 endif()
 
@@ -255,6 +256,17 @@ target_link_libraries(mav_msgs ${PROTOBUF_LIBRARY} gazebo_msgs)
 # NOTE: This is deprecated, should be using target_link_libraries instead
 link_libraries(mav_msgs)
 
+## Generate services in the 'srv' folder
+add_service_files(
+  DIRECTORY
+  srv
+)
+
+generate_messages(
+  DEPENDENCIES
+  std_msgs
+)
+
 # ============================================== #
 # ==================== CATKIN ================== #
 # ============================================== #
@@ -344,6 +356,14 @@ if (NOT NO_ROS)
   add_dependencies(rotors_gazebo_gps_plugin ${catkin_EXPORTED_TARGETS})
 endif()
 list(APPEND targets_to_install rotors_gazebo_gps_plugin)
+
+#========================================= GIMBAL PLUGIN ===========================================//
+add_library(rotors_gazebo_gimbal_plugin SHARED src/gazebo_gimbal_plugin.cpp)
+target_link_libraries(rotors_gazebo_gimbal_plugin ${target_linking_LIBRARIES} )
+if (NOT NO_ROS)
+  add_dependencies(rotors_gazebo_gimbal_plugin ${catkin_EXPORTED_TARGETS})
+endif()
+list(APPEND targets_to_install rotors_gazebo_gimbal_plugin)
 
 #========================================= IMU PLUGIN ===========================================//
 add_library(rotors_gazebo_imu_plugin SHARED src/gazebo_imu_plugin.cpp)
