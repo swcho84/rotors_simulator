@@ -32,22 +32,16 @@ void BottomGimbalPlugin::Load(physics::ModelPtr model, sdf::ElementPtr sdf)
   node_->Init();
 
   dPitchCmd_ = 0.0;
-  pidPitch_.Init(0.2, 0, 0, 1, -1, 50, -50);
-  linkBase_ = model_->GetLink("/firefly/base_link");
+  pidPitch_.Init(0.2, 0, 0, 1, -1, 10, -10);
 
-  std::string strPitchLinkName = "/firefly/gimbal_base_link";
-  linkPitch_ = model_->GetLink(strPitchLinkName);
+  getSdfParam<std::string>(sdf, "linkBaseName", strLinkBase_, strLinkBase_, true);  
+  getSdfParam<std::string>(sdf, "linkPitchName", strLinkPitch_, strLinkPitch_, true);    
 
-  if (!linkPitch_)
-    gzerr << "BottomGimbalPlugin::Load ERROR!::" << strPitchLinkName << std::endl;
+  linkBase_ = model_->GetLink(strLinkBase_);
+  linkPitch_ = model_->GetLink(strLinkPitch_);  
 
   updateConnection_ = event::Events::ConnectWorldUpdateBegin(boost::bind(&BottomGimbalPlugin::OnUpdate, this, _1));
   gzmsg << "BottomGimbalPlugin::Init" << std::endl;
-
-  linkPitch_->SetGravityMode(false);
-  physics::Link_V links = linkPitch_->GetChildJointsLinks();
-  for (unsigned int i = 0; i < links.size(); i++)
-    links[i]->SetGravityMode(false);
 
   // ROS
   if (!ros::isInitialized()) {
@@ -61,11 +55,11 @@ void BottomGimbalPlugin::Load(physics::ModelPtr model, sdf::ElementPtr sdf)
   pubGimbalInfo_ = nh.advertise<std_msgs::Float32MultiArray>("/firefly/bottom_gimbal/attitude", 1);  
 }
 
-void BottomGimbalPlugin::OnUpdate(const common::UpdateInfo &_info)
+void BottomGimbalPlugin::OnUpdate(const common::UpdateInfo  &_info)
 {
   if (!linkPitch_)
   {
-    ROS_INFO("Please check gimbal_base_link..");
+    ROS_INFO("Please check gimbal_base_link..%d,%d", (int)(!linkBase_), (int)(!linkPitch_));
     return;
   }
 
@@ -75,7 +69,7 @@ void BottomGimbalPlugin::OnUpdate(const common::UpdateInfo &_info)
   ignition::math::Pose3d originAngle(
       baseLinkPose.Pos().X(),
       baseLinkPose.Pos().Y(),
-      baseLinkPose.Pos().Z() - 0.315,
+      baseLinkPose.Pos().Z() - 0.025,
       0.0, 
       -1 * (dPitchCmd_ / 180 * 3.141592),
       baseLinkPose.Rot().Yaw());

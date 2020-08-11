@@ -70,6 +70,9 @@ private:
   physics::LinkPtr linkPitch_;
   common::PID pidPitch_;
 
+  std::string strLinkBase_;
+  std::string strLinkPitch_;
+
   double dPitchCmd_;
   event::ConnectionPtr updateConnection_;
 
