@@ -37,6 +37,65 @@
     </gazebo>
   </xacro:macro>
 
+  <!-- leddar vu8 8-segment sensor -->
+<!--   <xacro:macro name="lidar_leddar_vu8_macro" params="namespace parent_link lidar_name lidar_topic min_angle max_angle min_range max_range *origin">
+    <link name="${lidar_name}/lidar_link">
+      <visual name="visual">
+        <origin xyz="0 0 0" rpy="${pi/2} 0 0" />
+        <geometry>
+          <mesh filename="package://rotors_description/meshes/leddarvu.dae" scale="1 1 1" />
+        </geometry>        
+      </visual>
+    </link>    
+    <joint name="${lidar_name}/lidar_joint" type="fixed">
+      <xacro:insert_block name="origin" />
+      <parent link="${parent_link}" />
+      <child link="${lidar_name}/lidar_link" />
+    </joint>    
+    <link name="${lidar_name}/lidar_optical_link">      
+    </link>
+    <joint name="${lidar_name}/lidar_optical_joint" type="fixed">
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <parent link="${lidar_name}/lidar_link" />
+      <child link="${lidar_name}/lidar_optical_link" />
+    </joint>
+    <gazebo reference="${lidar_name}/lidar_optical_link">      
+      <sensor type="ray" name="${lidar_name}_lidar">
+        <pose>0 0 0 0 0 0</pose>
+        <visualize>true</visualize>
+        <update_rate>100</update_rate>
+        <ray>          
+          <scan>            
+            <horizontal>
+              <samples>8</samples>
+              <resolution>30</resolution>
+              <min_angle>${min_angle}</min_angle>
+              <max_angle>${max_angle}</max_angle>
+            </horizontal>
+          </scan>
+          <range>
+            <min>0.1</min>
+            <max>${max_range + 1}</max>
+            <resolution>0.01</resolution>
+          </range>
+          <noise>
+            <type>gaussian</type>
+            <mean>0.0</mean>
+            <stddev>0.01</stddev>
+          </noise>
+        </ray>
+        <plugin name="gazebo_leddar_vu8_lidar_plugin" filename="libgazebo_leddar_vu8_lidar_plugin.so">
+          <lidar_topic>${lidar_topic}</lidar_topic>
+          <min_range>${min_range}</min_range>
+          <max_range>${max_range}</max_range>
+          <min_angle>${min_angle}</min_angle>
+          <max_angle>${max_angle}</max_angle>
+        </plugin>
+        <always_on>1</always_on>
+      </sensor>
+    </gazebo>
+  </xacro:macro>   -->
+
   <!-- Macro to add a camera. -->
   <xacro:macro name="camera_macro"
     params="namespace parent_link camera_suffix frame_rate

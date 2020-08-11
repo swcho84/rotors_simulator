@@ -256,6 +256,14 @@ target_link_libraries(mav_msgs ${PROTOBUF_LIBRARY} gazebo_msgs)
 # NOTE: This is deprecated, should be using target_link_libraries instead
 link_libraries(mav_msgs)
 
+## Generate messages in the 'msg' folder
+add_message_files(
+  FILES
+  VuChunk.msg
+  VuInfo.msg
+)
+
+
 ## Generate services in the 'srv' folder
 add_service_files(
   DIRECTORY
@@ -364,6 +372,14 @@ if (NOT NO_ROS)
   add_dependencies(rotors_gazebo_gimbal_plugin ${catkin_EXPORTED_TARGETS})
 endif()
 list(APPEND targets_to_install rotors_gazebo_gimbal_plugin)
+
+#========================================= LEDDAR VU8 LIDAR PLUGIN ===========================================//
+add_library(rotors_gazebo_leddar_vu8_lidar_plugin SHARED src/gazebo_leddar_vu8_lidar_plugin.cpp)
+target_link_libraries(rotors_gazebo_leddar_vu8_lidar_plugin ${target_linking_LIBRARIES} )
+if (NOT NO_ROS)
+  add_dependencies(rotors_gazebo_leddar_vu8_lidar_plugin ${catkin_EXPORTED_TARGETS})
+endif()
+list(APPEND targets_to_install rotors_gazebo_leddar_vu8_lidar_plugin)
 
 #========================================= IMU PLUGIN ===========================================//
 add_library(rotors_gazebo_imu_plugin SHARED src/gazebo_imu_plugin.cpp)
