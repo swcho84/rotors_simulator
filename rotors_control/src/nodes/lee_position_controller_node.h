@@ -30,12 +30,27 @@
 #include <mav_msgs/AttitudeThrust.h>
 #include <mav_msgs/eigen_mav_msgs.h>
 #include <nav_msgs/Odometry.h>
+#include <sensor_msgs/Joy.h>
+
 #include <ros/callback_queue.h>
 #include <ros/ros.h>
 #include <trajectory_msgs/MultiDOFJointTrajectory.h>
 
 #include "rotors_control/common.h"
 #include "rotors_control/lee_position_controller.h"
+
+// for xbox360 wired joystick
+#define YAWAXIS     0
+#define XNAXIS      1
+#define YEAXIS      2
+#define ZDAxis      3
+#define YAWAXISDIR  1
+#define XNAXISDIR   1
+#define YEAXISDIR   1
+#define ZDAXISDIR   1
+#define XNPOSRES    2.0
+#define YEPOSRES    2.0
+#define ZDPOSRES    1.0
 
 namespace rotors_control {
 
@@ -60,6 +75,7 @@ class LeePositionControllerNode {
   ros::Subscriber cmd_multi_dof_joint_trajectory_sub_;
   ros::Subscriber cmd_pose_sub_;
   ros::Subscriber odometry_sub_;
+  ros::Subscriber cmd_joystick_sub_;
 
   ros::Publisher motor_velocity_reference_pub_;
 
@@ -76,6 +92,8 @@ class LeePositionControllerNode {
       const geometry_msgs::PoseStampedConstPtr& pose_msg);
 
   void OdometryCallback(const nav_msgs::OdometryConstPtr& odometry_msg);
+
+  void JoyCallback(const sensor_msgs::JoyConstPtr& joy_msg);
 };
 }
 

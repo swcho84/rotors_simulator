@@ -35,7 +35,7 @@
   </xacro:vi_sensor_macro>
 
   <!-- leddartech vu8 Lidar -->
-<!--   <xacro:lidar_leddar_vu8_macro
+  <xacro:lidar_leddar_vu8_macro
     namespace="${namespace}"
     lidar_name="${namespace}/vu8_lidar"
     parent_link="${namespace}/gimbal_base_link"
@@ -45,5 +45,5 @@
     min_angle="-0.418879"
     max_angle="0.418879">
     <origin xyz="-0.030 0.0 -0.030" rpy="${pi} ${pi/2} 0" />
-  </xacro:lidar_leddar_vu8_macro>   -->
+  </xacro:lidar_leddar_vu8_macro>  
 </robot>

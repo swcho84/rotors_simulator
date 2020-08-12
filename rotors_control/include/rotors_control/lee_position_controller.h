@@ -65,6 +65,9 @@ class LeePositionController {
   void SetTrajectoryPoint(
     const mav_msgs::EigenTrajectoryPoint& command_trajectory);
 
+  void SetJoysticPoseCmd(Eigen::Vector4d joy_cmd);
+  double SetYawCmd(Eigen::Vector4d joy_cmd);    
+
   LeePositionControllerParameters controller_parameters_;
   VehicleParameters vehicle_parameters_;
 
@@ -77,9 +80,11 @@ class LeePositionController {
   Eigen::Vector3d normalized_angular_rate_gain_;
   Eigen::MatrixX4d angular_acc_to_rotor_velocities_;
 
+  Eigen::Vector4d joystick_pose_cmd_;
+
   mav_msgs::EigenTrajectoryPoint command_trajectory_;
   EigenOdometry odometry_;
-
+  
   void ComputeDesiredAngularAcc(const Eigen::Vector3d& acceleration,
                                 Eigen::Vector3d* angular_acceleration) const;
   void ComputeDesiredAcceleration(Eigen::Vector3d* acceleration) const;

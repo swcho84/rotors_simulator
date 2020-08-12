@@ -97,7 +97,7 @@ void Joy::JoyCallback(const sensor_msgs::JoyConstPtr& msg) {
   // control_msg_.yaw_rate = current_yaw_vel_;
 
   // for using stick
-  control_msg_.yaw_rate = msg->axes[axes_.yaw] * max_.rate_yaw * axes_.yaw_direction;;
+  control_msg_.yaw_rate = msg->axes[axes_.yaw] * max_.rate_yaw * axes_.yaw_direction;
 
   if (is_fixed_wing_) {
     double thrust = msg->axes[axes_.thrust] * axes_.thrust_direction;

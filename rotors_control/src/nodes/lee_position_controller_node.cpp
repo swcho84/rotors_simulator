@@ -41,6 +41,8 @@ LeePositionControllerNode::LeePositionControllerNode(
       mav_msgs::default_topics::COMMAND_TRAJECTORY, 1,
       &LeePositionControllerNode::MultiDofJointTrajectoryCallback, this);
 
+  cmd_joystick_sub_ = nh_.subscribe("/joy", 1, &LeePositionControllerNode::JoyCallback, this);
+
   odometry_sub_ = nh_.subscribe(mav_msgs::default_topics::ODOMETRY, 1,
                                &LeePositionControllerNode::OdometryCallback, this);
   std::string strOdom = mav_msgs::default_topics::ODOMETRY;
@@ -98,6 +100,20 @@ void LeePositionControllerNode::InitializeParams() {
   lee_position_controller_.InitializeParameters();
 }
 void LeePositionControllerNode::Publish() {
+}
+
+void LeePositionControllerNode::JoyCallback(
+    const sensor_msgs::JoyConstPtr& joy_msg)
+{
+  // 0: yaw, 1: Xn position, 2: Ye position, 3: Zd position
+  Eigen::Vector4d joystick_pose_cmd;
+
+  joystick_pose_cmd(0) = (joy_msg->axes[YAWAXIS]) * (YAWAXISDIR);
+  joystick_pose_cmd(1) = (joy_msg->axes[XNAXIS]) * (XNAXISDIR);
+  joystick_pose_cmd(2) = (joy_msg->axes[YEAXIS]) * (YEAXISDIR);
+  joystick_pose_cmd(3) = (joy_msg->axes[ZDAxis]) * (ZDAXISDIR);
+
+  lee_position_controller_.SetJoysticPoseCmd(joystick_pose_cmd);
 }
 
 void LeePositionControllerNode::CommandPoseCallback(
