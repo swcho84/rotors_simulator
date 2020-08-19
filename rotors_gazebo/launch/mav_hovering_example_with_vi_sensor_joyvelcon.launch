@@ -1,7 +1,7 @@
 <launch>
   <env name="ROSCONSOLE_CONFIG_FILE" value="$(find rotors_control)/rosconsole.config"/>
   <arg name="mav_name" default="firefly"/>
-  <arg name="world_name" default="basic"/>
+  <arg name="world_name" default="riverside"/>  <!-- basic -->
   <arg name="enable_logging" default="false" />
   <arg name="enable_ground_truth" default="true" />
   <arg name="log_file" default="$(arg mav_name)" />
@@ -10,10 +10,10 @@
   <env name="GAZEBO_RESOURCE_PATH" value="${GAZEBO_RESOURCE_PATH}:$(find rotors_gazebo)/models"/>
   <include file="$(find gazebo_ros)/launch/empty_world.launch">
     <arg name="world_name" value="$(find rotors_gazebo)/worlds/$(arg world_name).world" />
-    <!-- <arg name="debug" value="true"/> -->
+    <arg name="debug" value="false"/>
     <arg name="paused" value="true"/>
-    <!-- <arg name="gui" value="false"/> -->
-    <!-- <arg name="verbose" value="true"/> -->
+    <arg name="gui" value="false"/>
+    <arg name="verbose" value="false"/>
   </include>
 
   <group ns="$(arg mav_name)">
