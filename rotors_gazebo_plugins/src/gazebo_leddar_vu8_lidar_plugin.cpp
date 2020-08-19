@@ -49,7 +49,7 @@ void LidarLeddarVu8Plugin::Load(sensors::SensorPtr _parent, sdf::ElementPtr _sdf
   this->newLaserScansConnection = this->parentSensor->LaserShape()->ConnectNewLaserScans(boost::bind(&LidarLeddarVu8Plugin::OnNewLaserScans, this));
 
   getSdfParam<std::string>(_sdf, "lidar_topic", lidar_topic, "/lidar_default/info");
-  getSdfParam<float>(_sdf, "min_range", min_range, 1.5);
+  getSdfParam<float>(_sdf, "min_range", min_range, 0.5);
   getSdfParam<float>(_sdf, "max_range", max_range, 30.0);
   getSdfParam<float>(_sdf, "min_angle", min_angle, -0.418879);
   getSdfParam<float>(_sdf, "max_angle", max_angle, 0.418879);

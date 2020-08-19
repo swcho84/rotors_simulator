@@ -85,10 +85,6 @@ void LeePositionController::SetOdometry(const EigenOdometry& odometry) {
   odometry_ = odometry;
 }
 
-void LeePositionController::SetJoysticPoseCmd(Eigen::Vector4d joy_cmd){
-  joystick_pose_cmd_ = joy_cmd;
-}
-
 void LeePositionController::SetTrajectoryPoint(
     const mav_msgs::EigenTrajectoryPoint& command_trajectory) {
   command_trajectory_ = command_trajectory;
@@ -99,55 +95,11 @@ void LeePositionController::ComputeDesiredAcceleration(Eigen::Vector3d* accelera
   assert(acceleration);
 
   // original: error dynamics, position error
-  // Eigen::Vector3d position_error;
-  // position_error = odometry_.position - command_trajectory_.position_W;
-
-  // joystick: error dynamics, position error
   Eigen::Vector3d position_error;
-  Eigen::Vector3d position_command;
-  double XposExp = 0.0;
-  double YposExp = 0.0;
-  double ZposExp = 0.0;
-  double coeffA = -2.4;
-  double coeffB = 0.2;
-  double coeffC = -0.2;
-  double trimZpos = 0.356;
-
-  if (joystick_pose_cmd_(1) > 0)
-    XposExp = (coeffC) + (coeffB)/(exp((coeffA)*((double)(joystick_pose_cmd_(1)))));
-  else if (joystick_pose_cmd_(1) < 0)
-    XposExp = ((-1.0)*(coeffC)) + ((-1.0)*(coeffB))/(exp(((-1.0)*(coeffA))*((double)(joystick_pose_cmd_(1)))));
-  else
-    XposExp = 0.0;
-
-  if (joystick_pose_cmd_(2) > 0)
-    YposExp = (coeffC) + (coeffB)/(exp((coeffA)*((double)(joystick_pose_cmd_(2)))));
-  else if (joystick_pose_cmd_(2) < 0)
-    YposExp = ((-1.0)*(coeffC)) + ((-1.0)*(coeffB))/(exp(((-1.0)*(coeffA))*((double)(joystick_pose_cmd_(2)))));
-  else
-    YposExp = 0.0;  
-
-  if (joystick_pose_cmd_(3) > 0)
-    ZposExp = (coeffC) + (coeffB)/(exp((coeffA)*((double)(joystick_pose_cmd_(3)))));
-  else if (joystick_pose_cmd_(3) < 0)
-    ZposExp = ((-1.0)*(coeffC)) + ((-1.0)*(coeffB))/(exp(((-1.0)*(coeffA))*((double)(joystick_pose_cmd_(3)))));
-  else
-    ZposExp = 0.0;    
-
-  Eigen::Vector3d pos_cmd;
-  position_command(0) = odometry_.position(0) + XposExp;
-  position_command(1) = odometry_.position(1) + YposExp;
-  position_command(2) = odometry_.position(2) + ZposExp + trimZpos;
-
-  if (fabs(XposExp) > 0.1)
-    position_command(2) += (0.025)*(double)(fabs(XposExp));  
-
-  if (fabs(YposExp) > 0.1) 
-    position_command(2) += (0.025)*(double)(fabs(YposExp));  
-
-  position_error = odometry_.position - position_command;
-
-  ROS_INFO("Z_Axis:cmd(%.4lf), currPos(%.4lf), joy(%.4lf)", position_command(2), odometry_.position(2), (double)(joystick_pose_cmd_(3)));
+  // position_error = odometry_.position - command_trajectory_.position_W;
+  position_error(0) = 0.0;
+  position_error(1) = 0.0;
+  position_error(2) = odometry_.position(2) - command_trajectory_.position_W(2);
 
   // Transform velocity to world frame.
   // error dynamics, velocity error
@@ -172,14 +124,9 @@ void LeePositionController::ComputeDesiredAngularAcc(const Eigen::Vector3d& acce
   Eigen::Matrix3d R = odometry_.orientation.toRotationMatrix();
 
   // Get the desired rotation matrix.
-  // Eigen::Vector3d b1_des;
-  // double yaw = command_trajectory_.getYaw();
-  // b1_des << cos(yaw), sin(yaw), 0;
-
-  // using joystick 
-  Eigen::Vector3d b1_des; 
-  double yaw = (-180)*(double)(joystick_pose_cmd_(0));
-  b1_des << cos(yaw), sin(yaw), 0;
+  Eigen::Vector3d b1_des;
+  double yaw = command_trajectory_.getYaw();
+  b1_des << cos(yaw), sin(yaw), 0.0;
 
   Eigen::Vector3d b3_des;
   b3_des = -acceleration / acceleration.norm();

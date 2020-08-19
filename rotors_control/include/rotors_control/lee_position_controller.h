@@ -65,9 +65,6 @@ class LeePositionController {
   void SetTrajectoryPoint(
     const mav_msgs::EigenTrajectoryPoint& command_trajectory);
 
-  void SetJoysticPoseCmd(Eigen::Vector4d joy_cmd);
-  double SetYawCmd(Eigen::Vector4d joy_cmd);    
-
   LeePositionControllerParameters controller_parameters_;
   VehicleParameters vehicle_parameters_;
 

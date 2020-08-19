@@ -85,7 +85,7 @@
             <stddev>0.01</stddev>
           </noise>
         </ray>
-        <plugin name="gazebo_leddar_vu8_lidar_plugin" filename="libgazebo_leddar_vu8_lidar_plugin.so">
+        <plugin name="gazebo_leddar_vu8_lidar_plugin" filename="librotors_gazebo_leddar_vu8_lidar_plugin.so">
           <lidar_topic>${lidar_topic}</lidar_topic>
           <min_range>${min_range}</min_range>
           <max_range>${max_range}</max_range>

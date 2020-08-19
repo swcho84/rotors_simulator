@@ -75,7 +75,6 @@ class LeePositionControllerNode {
   ros::Subscriber cmd_multi_dof_joint_trajectory_sub_;
   ros::Subscriber cmd_pose_sub_;
   ros::Subscriber odometry_sub_;
-  ros::Subscriber cmd_joystick_sub_;
 
   ros::Publisher motor_velocity_reference_pub_;
 
@@ -92,8 +91,6 @@ class LeePositionControllerNode {
       const geometry_msgs::PoseStampedConstPtr& pose_msg);
 
   void OdometryCallback(const nav_msgs::OdometryConstPtr& odometry_msg);
-
-  void JoyCallback(const sensor_msgs::JoyConstPtr& joy_msg);
 };
 }
 

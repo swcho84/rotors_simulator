@@ -40,7 +40,7 @@
     lidar_name="${namespace}/vu8_lidar"
     parent_link="${namespace}/gimbal_base_link"
     lidar_topic="${namespace}/vu8_lidar/info"
-    min_range="1.5"
+    min_range="0.5"
     max_range="30"
     min_angle="-0.418879"
     max_angle="0.418879">
