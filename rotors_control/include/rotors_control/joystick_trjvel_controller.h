@@ -49,6 +49,9 @@
 #include <tf2/LinearMath/Quaternion.h>
 #include <tf2/utils.h>
 
+// for using custom msg 
+#include "rotors_control/NedPosEulerAtt.h"
+
 #define PI          3.141592
 #define R2D         180.0/PI
 #define D2R         PI/180.0
@@ -91,18 +94,24 @@ private:
 
   Subscriber subPoseInfo_;
   void CbPoseInfo(const geometry_msgs::PoseConstPtr& msg);
-  Eigen::Vector3d mavPos_;
-  Eigen::Vector3d mavAtt_;
+  Eigen::Vector3d mavPosEnu_;
+  Eigen::Vector3d mavPosNed_;  
+  Eigen::Vector3d mavEulerAtt_;
   double dHeightRef_;
   double dYawAngRef_;
 
   Publisher pubJoyTrjVelInfo_;
   void GenJoyConInfo();
+  void GenExtGuideConInfo();
 
+  Publisher pubNedPosEulerAttInfo_;
+  
   Quaterniond CalcQuaternionFromYPREulerAng(Vector3d euler);
   Vector3d CalcYPREulerAngFromQuaternion(Quaterniond q);
   Matrix3d CalcDcmNtoB(Vector3d eulerAtt);
   Matrix3d CalcDcmBtoN(Vector3d eulerAtt);
+  Matrix3d CalcDcmEuler321(Vector3d eulerAtt);
+  Vector3d ConvertPosFromEnuToNed(Vector3d posEnu);
   double wrap_d(double _angle);
 };
 

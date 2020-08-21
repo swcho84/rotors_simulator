@@ -17,6 +17,17 @@ find_package(catkin REQUIRED COMPONENTS
 
 find_package(Eigen3 REQUIRED)
 
+## Generate messages in the 'msg' folder
+add_message_files(
+  FILES
+  NedPosEulerAtt.msg
+)
+
+generate_messages(
+  DEPENDENCIES
+  std_msgs
+)
+
 catkin_package(
   INCLUDE_DIRS include ${Eigen3_INCLUDE_DIRS}
   LIBRARIES lee_position_controller roll_pitch_yawrate_thrust_controller body_velocity_controller

@@ -10,6 +10,7 @@ JoyTrjVelCntl::JoyTrjVelCntl()
   subJoyInfo_ = nh_.subscribe("/joy", 1, &JoyTrjVelCntl::CbJoyInfo, this);
   subPoseInfo_ = nh_.subscribe("/firefly/odometry_sensor1/pose", 1, &JoyTrjVelCntl::CbPoseInfo, this);
   pubJoyTrjVelInfo_ = nh_.advertise<trajectory_msgs::MultiDOFJointTrajectory>("/firefly/command/trajectory", 1);
+  pubNedPosEulerAttInfo_ = nh_.advertise<rotors_control::NedPosEulerAtt>("/firefly/odometry_sensor1/pos_ned_att_euler", 1);
 
   // initializing joystick pose information
   for (unsigned int i = 0; i < 4; i++)
@@ -18,8 +19,9 @@ JoyTrjVelCntl::JoyTrjVelCntl()
   // initializing mav pose information
   for (unsigned int i = 0; i < 3; i++)
   {
-    mavPos_(i) = 0.0;
-    mavAtt_(i) = 0.0;
+    mavPosEnu_(i) = 0.0;
+    mavPosNed_(i) = 0.0;
+    mavEulerAtt_(i) = 0.0;
   }
 
   dHeightRef_ = 0.0;
@@ -46,12 +48,17 @@ void JoyTrjVelCntl::MainLoop()
   
   if (bCurrUseExtGuidLoop_)
   {
-    ROS_INFO("external guidance control input loop...");
+    GenExtGuideConInfo();
     return;
   }
 
   ROS_INFO_DELAYED_THROTTLE(10, "waiting controller setup(joystick, external guidance loop)...");
   return;
+}
+
+void JoyTrjVelCntl::GenExtGuideConInfo()
+{
+  ROS_INFO_DELAYED_THROTTLE(10, "external guidance control input loop...");
 }
 
 void JoyTrjVelCntl::GenJoyConInfo()
@@ -86,8 +93,8 @@ void JoyTrjVelCntl::GenJoyConInfo()
   bodyVelCmd(2) = 0.0;
   Matrix3d DcmNtoB;
   Matrix3d DcmBtoN;
-  DcmNtoB = CalcDcmNtoB(mavAtt_);
-  DcmBtoN = CalcDcmBtoN(mavAtt_);
+  DcmNtoB = CalcDcmNtoB(mavEulerAtt_);
+  DcmBtoN = CalcDcmBtoN(mavEulerAtt_);
   Vector3d nedVelCmd;
   nedVelCmd = (DcmBtoN) * (bodyVelCmd);
   msgCurrJoyVel.linear.x = nedVelCmd(0);
@@ -158,11 +165,12 @@ void JoyTrjVelCntl::CbJoyInfo(const sensor_msgs::JoyConstPtr& msg)
 }
 
 void JoyTrjVelCntl::CbPoseInfo(const geometry_msgs::PoseConstPtr& msg) 
-{
-  // enu data
-  mavPos_(0) = msg->position.x;
-  mavPos_(1) = msg->position.y;
-  mavPos_(2) = msg->position.z;  
+{ 
+  // converting enu data to ned data
+  mavPosEnu_(0) = msg->position.x;
+  mavPosEnu_(1) = msg->position.y;
+  mavPosEnu_(2) = msg->position.z;
+  mavPosNed_ = ConvertPosFromEnuToNed(mavPosEnu_);    
 
   // attitude data, 3-2-1 Euler angle
   Quaterniond qAtt;
@@ -172,9 +180,20 @@ void JoyTrjVelCntl::CbPoseInfo(const geometry_msgs::PoseConstPtr& msg)
   qAtt.z() = msg->orientation.z;
   qAtt.w() = msg->orientation.w;
   eulerAng = CalcYPREulerAngFromQuaternion(qAtt);
-  mavAtt_(0) = wrap_d(eulerAng(0));
-  mavAtt_(1) = wrap_d(eulerAng(1));
-  mavAtt_(2) = wrap_d(eulerAng(2));
+  mavEulerAtt_(0) = wrap_d(eulerAng(0));
+  mavEulerAtt_(1) = wrap_d(eulerAng(1));
+  mavEulerAtt_(2) = wrap_d(eulerAng(2));
+
+  // publishing the result, domain: aerospace control side
+  rotors_control::NedPosEulerAtt msgNedPosEulerAtt;
+  msgNedPosEulerAtt.rosTime = (double)(ros::Time::now().toSec());
+  msgNedPosEulerAtt.Xn = mavPosNed_(0);
+  msgNedPosEulerAtt.Ye = mavPosNed_(1);
+  msgNedPosEulerAtt.Zd = mavPosNed_(2);
+  msgNedPosEulerAtt.rollPhi = mavEulerAtt_(0);
+  msgNedPosEulerAtt.pitchTheta = mavEulerAtt_(1);
+  msgNedPosEulerAtt.yawPsi = ((-1.0)*(mavEulerAtt_(2))) + ((0.5) * (PI));
+  pubNedPosEulerAttInfo_.publish(msgNedPosEulerAtt);
 }
 
 // converting the Euler angle(3-2-1, ZYX, YPR) [rad] to the quaternion
@@ -229,6 +248,31 @@ Matrix3d JoyTrjVelCntl::CalcDcmNtoB(Vector3d eulerAtt)
   result(2, 0) = sy*cx*cz + sz*sx;
   result(2, 1) = sy*cx*sz - cz*sx;
   result(2, 2) = cy*cx;
+  return result;
+}
+
+// calculating DCM, Euler angle, 321 conversion (ref:from NED to Body, using Euler angle (3->2->1))
+// only 3-2-1 convention
+// [          cy*cz,          cy*sz,            -sy]
+// [ sy*sx*cz-sz*cx, sy*sx*sz+cz*cx,          cy*sx]
+// [ sy*cx*cz+sz*sx, sy*cx*sz-cz*sx,          cy*cx]
+Matrix3d JoyTrjVelCntl::CalcDcmEuler321(Vector3d eulerAtt)
+{
+  return CalcDcmNtoB(eulerAtt);
+}
+
+// converting from the position w.r.t ENU frame to the position w.r.t NED frame
+Vector3d JoyTrjVelCntl::ConvertPosFromEnuToNed(Vector3d posEnu)
+{
+  // tested(ok)
+  Vector3d result;
+  Vector3d attForEnuToNed;
+  Matrix3d dcmForEnuToNed;
+  attForEnuToNed(0) = (-180.0) * (D2R);
+  attForEnuToNed(1) = (0.0) * (D2R);
+  attForEnuToNed(2) = (90.0) * (D2R);
+  dcmForEnuToNed = CalcDcmEuler321(attForEnuToNed);
+  result = (dcmForEnuToNed) * (posEnu);
   return result;
 }
 
