@@ -24,6 +24,11 @@ JoyTrjVelCntl::JoyTrjVelCntl()
 
   dHeightRef_ = 0.0;
   dYawAngRef_ = 0.0;
+
+  bCurrUseJoyConLoop_ = false;
+  bCurrUseExtGuidLoop_ = false;  
+  bPrevUseJoyConLoop_ = false;
+  bPrevUseExtGuidLoop_ = false;    
 }
 
 JoyTrjVelCntl::~JoyTrjVelCntl()
@@ -32,6 +37,24 @@ JoyTrjVelCntl::~JoyTrjVelCntl()
 }
 
 void JoyTrjVelCntl::MainLoop()
+{
+  if (bCurrUseJoyConLoop_)
+  {
+    GenJoyConInfo();
+    return;
+  }
+  
+  if (bCurrUseExtGuidLoop_)
+  {
+    ROS_INFO("external guidance control input loop...");
+    return;
+  }
+
+  ROS_INFO_DELAYED_THROTTLE(10, "waiting controller setup(joystick, external guidance loop)...");
+  return;
+}
+
+void JoyTrjVelCntl::GenJoyConInfo()
 {
   trajectory_msgs::MultiDOFJointTrajectory msgJoyTrjVelInfo;
   trajectory_msgs::MultiDOFJointTrajectoryPoint msgJoyVelInfo;
@@ -101,14 +124,47 @@ void JoyTrjVelCntl::CbJoyInfo(const sensor_msgs::JoyConstPtr& msg)
   joyPose_(1) = (msg->axes[XNAXIS]) * (XNAXISDIR);
   joyPose_(2) = (msg->axes[YEAXIS]) * (YEAXISDIR);
   joyPose_(3) = (msg->axes[ZDAxis]) * (ZDAXISDIR);
+
+  // using button A, B, X w.r.t xbox360
+  if ((msg->buttons[0] == 1) && (msg->buttons[1] == 0))
+  {
+    // using joystick control input
+    bCurrUseJoyConLoop_ = true;
+    bCurrUseExtGuidLoop_ = false;    
+  }
+  else if ((msg->buttons[0] == 0) && (msg->buttons[1] == 1))
+  {
+    // using guidance control input
+    bCurrUseJoyConLoop_ = false;
+    bCurrUseExtGuidLoop_ = true;  
+  }
+  else
+  {
+    // staying the flag type
+    bCurrUseJoyConLoop_ = bPrevUseJoyConLoop_;
+    bCurrUseExtGuidLoop_ = bPrevUseExtGuidLoop_;
+    
+    // off the external input, just hovering
+    if (msg->buttons[2] == 1)
+    {
+      bCurrUseJoyConLoop_ = false;
+      bCurrUseExtGuidLoop_ = false;        
+    }    
+  }
+  
+  // saving the previous data
+  bPrevUseJoyConLoop_ = bCurrUseJoyConLoop_;
+  bPrevUseExtGuidLoop_ = bCurrUseExtGuidLoop_;
 }
 
 void JoyTrjVelCntl::CbPoseInfo(const geometry_msgs::PoseConstPtr& msg) 
 {
+  // enu data
   mavPos_(0) = msg->position.x;
   mavPos_(1) = msg->position.y;
   mavPos_(2) = msg->position.z;  
 
+  // attitude data, 3-2-1 Euler angle
   Quaterniond qAtt;
   Vector3d eulerAng;
   qAtt.x() = msg->orientation.x;
@@ -116,9 +172,9 @@ void JoyTrjVelCntl::CbPoseInfo(const geometry_msgs::PoseConstPtr& msg)
   qAtt.z() = msg->orientation.z;
   qAtt.w() = msg->orientation.w;
   eulerAng = CalcYPREulerAngFromQuaternion(qAtt);
-  mavAtt_(0) = eulerAng(0);
-  mavAtt_(1) = eulerAng(1);
-  mavAtt_(2) = eulerAng(2);
+  mavAtt_(0) = wrap_d(eulerAng(0));
+  mavAtt_(1) = wrap_d(eulerAng(1));
+  mavAtt_(2) = wrap_d(eulerAng(2));
 }
 
 // converting the Euler angle(3-2-1, ZYX, YPR) [rad] to the quaternion

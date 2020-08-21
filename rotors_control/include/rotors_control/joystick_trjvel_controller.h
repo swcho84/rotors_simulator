@@ -84,6 +84,10 @@ private:
   Subscriber subJoyInfo_;
   void CbJoyInfo(const sensor_msgs::JoyConstPtr& msg);
   Eigen::Vector4d joyPose_;
+  bool bCurrUseJoyConLoop_;
+  bool bCurrUseExtGuidLoop_;
+  bool bPrevUseJoyConLoop_;
+  bool bPrevUseExtGuidLoop_;  
 
   Subscriber subPoseInfo_;
   void CbPoseInfo(const geometry_msgs::PoseConstPtr& msg);
@@ -93,12 +97,13 @@ private:
   double dYawAngRef_;
 
   Publisher pubJoyTrjVelInfo_;
+  void GenJoyConInfo();
 
   Quaterniond CalcQuaternionFromYPREulerAng(Vector3d euler);
   Vector3d CalcYPREulerAngFromQuaternion(Quaterniond q);
   Matrix3d CalcDcmNtoB(Vector3d eulerAtt);
   Matrix3d CalcDcmBtoN(Vector3d eulerAtt);
-  double wrap_d(double _angle);  
+  double wrap_d(double _angle);
 };
 
 #endif // ROTORS_CONTROL_JOYSTICK_TRJVEL_CONTROLLER_H
