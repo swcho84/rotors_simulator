@@ -30,7 +30,7 @@ generate_messages(
 
 catkin_package(
   INCLUDE_DIRS include ${Eigen3_INCLUDE_DIRS}
-  LIBRARIES lee_position_controller roll_pitch_yawrate_thrust_controller body_velocity_controller
+  LIBRARIES lee_position_controller roll_pitch_yawrate_thrust_controller
   CATKIN_DEPENDS geometry_msgs mav_msgs nav_msgs roscpp sensor_msgs trajectory_msgs tf2 tf2_ros
   DEPENDS Eigen3
 )
