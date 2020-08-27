@@ -144,7 +144,7 @@ if(${gazebo_VERSION_MAJOR} LESS 9)
 
 endif()
 
-find_package(OpenCV 4.2 REQUIRED)
+find_package(OpenCV 4 REQUIRED)
 find_package(Glog REQUIRED)
 link_directories(${GAZEBO_LIBRARY_DIRS})
 include_directories(${GAZEBO_INCLUDE_DIRS})
