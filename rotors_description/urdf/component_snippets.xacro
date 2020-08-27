@@ -37,6 +37,66 @@
     </gazebo>
   </xacro:macro>
 
+  <!-- leddar vu8 8-segment sensor -->
+  <xacro:macro name="lidar_leddar_vu8_macro" params="namespace parent_link lidar_name lidar_topic min_angle max_angle min_range max_range *origin">
+    <link name="${lidar_name}/lidar_link">
+      <visual name="visual">
+        <origin xyz="0 0 0" rpy="${pi/2} 0 0" />
+        <geometry>
+          <!-- <cylinder radius="0.005" length="0.005"/>  -->
+          <mesh filename="package://rotors_description/meshes/leddarvu.dae" scale="1 1 1" />
+        </geometry>        
+      </visual>
+    </link>    
+    <joint name="${lidar_name}/lidar_joint" type="fixed">
+      <xacro:insert_block name="origin" />
+      <parent link="${parent_link}" />
+      <child link="${lidar_name}/lidar_link" />
+    </joint>    
+    <link name="${lidar_name}/lidar_optical_link">      
+    </link>
+    <joint name="${lidar_name}/lidar_optical_joint" type="fixed">
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <parent link="${lidar_name}/lidar_link" />
+      <child link="${lidar_name}/lidar_optical_link" />
+    </joint>
+    <gazebo reference="${lidar_name}/lidar_optical_link">      
+      <sensor type="ray" name="${lidar_name}_lidar">
+        <pose>0 0 0 0 0 0</pose>
+        <visualize>true</visualize>
+        <update_rate>100</update_rate>
+        <ray>          
+          <scan>            
+            <horizontal>
+              <samples>8</samples>
+              <resolution>30</resolution>
+              <min_angle>${min_angle}</min_angle>
+              <max_angle>${max_angle}</max_angle>
+            </horizontal>
+          </scan>
+          <range>
+            <min>0.1</min>
+            <max>${max_range + 1}</max>
+            <resolution>0.01</resolution>
+          </range>
+          <noise>
+            <type>gaussian</type>
+            <mean>0.0</mean>
+            <stddev>0.01</stddev>
+          </noise>
+        </ray>
+        <plugin name="gazebo_leddar_vu8_lidar_plugin" filename="librotors_gazebo_leddar_vu8_lidar_plugin.so">
+          <lidar_topic>${lidar_topic}</lidar_topic>
+          <min_range>${min_range}</min_range>
+          <max_range>${max_range}</max_range>
+          <min_angle>${min_angle}</min_angle>
+          <max_angle>${max_angle}</max_angle>
+        </plugin>
+        <always_on>1</always_on>
+      </sensor>
+    </gazebo>
+  </xacro:macro>  
+
   <!-- Macro to add a camera. -->
   <xacro:macro name="camera_macro"
     params="namespace parent_link camera_suffix frame_rate
@@ -587,9 +647,9 @@
       horizontal_fov="1.3962634"
       image_width="752"
       image_height="480"
-      image_format="L8"
+      image_format="B8G8R8"
       min_distance="0.02"
-      max_distance="30"
+      max_distance="100"
       noise_mean="0.0"
       noise_stddev="0.007"
       enable_visual="true">
@@ -609,7 +669,7 @@
       horizontal_fov="1.3962634"
       image_width="752"
       image_height="480"
-      image_format="L8"
+      image_format="B8G8R8"
       min_distance="0.02"
       max_distance="${max_range}"
       noise_mean="0.0"
@@ -655,12 +715,13 @@
     <gazebo reference="${namespace}/camera_${camera_suffix}_link">
       <sensor type="depth" name="${namespace}_camera_{camera_suffix}">
         <always_on>true</always_on>
+        <visualize>true</visualize>
         <update_rate>${frame_rate}</update_rate>
         <camera>
-          <horizontal_fov>2</horizontal_fov>
+          <horizontal_fov>1.3962634</horizontal_fov>
           <image>
             <format>L8</format>
-            <width>640</width>
+            <width>752</width>
             <height>480</height>
           </image>
           <clip>
@@ -727,7 +788,7 @@
       <xacro:vi_sensor_stereo_camera_macro
         namespace="${namespace}" parent_link="${namespace}/vi_sensor_link"
         frame_rate="30.0" origin_offset_x="0.015" baseline_y="${0.055*2}"
-        origin_offset_z="0.0065" max_range="30.0">
+        origin_offset_z="0.0065" max_range="300.0">
       </xacro:vi_sensor_stereo_camera_macro>
     </xacro:if>
 
@@ -735,7 +796,7 @@
     <xacro:if value="${enable_depth}">
       <xacro:vi_sensor_depth_macro
         namespace="${namespace}" parent_link="${namespace}/vi_sensor_link"
-        camera_suffix="depth" frame_rate="30.0" max_range="10.0">
+        camera_suffix="depth" frame_rate="30.0" max_range="30.0">
         <origin xyz="0.015 0.055 0.0065" rpy="0 0 0" />
       </xacro:vi_sensor_depth_macro>
     </xacro:if>

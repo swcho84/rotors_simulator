@@ -77,9 +77,11 @@ class LeePositionController {
   Eigen::Vector3d normalized_angular_rate_gain_;
   Eigen::MatrixX4d angular_acc_to_rotor_velocities_;
 
+  Eigen::Vector4d joystick_pose_cmd_;
+
   mav_msgs::EigenTrajectoryPoint command_trajectory_;
   EigenOdometry odometry_;
-
+  
   void ComputeDesiredAngularAcc(const Eigen::Vector3d& acceleration,
                                 Eigen::Vector3d* angular_acceleration) const;
   void ComputeDesiredAcceleration(Eigen::Vector3d* acceleration) const;

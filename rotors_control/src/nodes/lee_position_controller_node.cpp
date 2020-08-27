@@ -43,6 +43,8 @@ LeePositionControllerNode::LeePositionControllerNode(
 
   odometry_sub_ = nh_.subscribe(mav_msgs::default_topics::ODOMETRY, 1,
                                &LeePositionControllerNode::OdometryCallback, this);
+  std::string strOdom = mav_msgs::default_topics::ODOMETRY;
+  ROS_INFO("ODOMETRY:%s", strOdom.c_str());
 
   motor_velocity_reference_pub_ = nh_.advertise<mav_msgs::Actuators>(
       mav_msgs::default_topics::COMMAND_ACTUATORS, 1);

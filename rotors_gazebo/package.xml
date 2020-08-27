@@ -28,5 +28,6 @@
   <depend>rotors_gazebo_plugins</depend>
   <depend>sensor_msgs</depend>
   <depend>xacro</depend>
-
+  <build_depend>octomap</build_depend>
+  <exec_depend>octomap</exec_depend>
 </package>

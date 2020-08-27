@@ -116,6 +116,7 @@ if (NOT NO_ROS)
     rotors_control
     std_srvs
     tf
+    message_generation
   )
 endif()
 
@@ -143,7 +144,7 @@ if(${gazebo_VERSION_MAJOR} LESS 9)
 
 endif()
 
-find_package(OpenCV REQUIRED)
+find_package(OpenCV 4 REQUIRED)
 find_package(Glog REQUIRED)
 link_directories(${GAZEBO_LIBRARY_DIRS})
 include_directories(${GAZEBO_INCLUDE_DIRS})
@@ -204,8 +205,44 @@ foreach(ITR ${GAZEBO_INCLUDE_DIRS})
   endif()
 endforeach()
 
+message(${PROTOBUF_IMPORT_DIRS})
+
 # Get lists of all .proto files in the msgs directory
 file(GLOB msgs msgs/*.proto)
+
+#set (msgs
+#     Actuators.proto
+#     BodyVelCmd.proto
+#     CommandMotorSpeed.proto
+#     ConnectGazeboToRosTopic.proto
+#     ConnectRosToGazeboTopic.proto
+#     Float32.proto 
+#     FluidPressure.proto
+#     Header.proto
+#     Imu.proto
+#     JointState.proto
+#     Lidar.proto
+#     MagneticField.proto
+#     NavSatFix.proto
+#     Odometry.proto
+#     OpticalFlow.proto
+#     Point.proto
+#     PointStamped.proto
+#     PoseStamped.proto
+#     PoseWithCovariance.proto
+#     PoseWithCovarianceStamped.proto
+#     RollPitchYawrateThrust.proto
+#     Transform.proto
+#     TransformStamped.proto
+#     TransformStampedWithFrameIds.proto
+#     Twist.proto
+#     TwistStamped.proto
+#     TwistWithCovariance.proto
+#     Vector3dStamped.proto
+#     WindSpeed.proto
+#     Wrench.proto
+#     WrenchStamped.proto
+#)
 
 # Finally, generate the .cpp files from the .proto files
 PROTOBUF_GENERATE_CPP(PROTO_SRCS PROTO_HDRS ${msgs})
@@ -218,6 +255,25 @@ target_link_libraries(mav_msgs ${PROTOBUF_LIBRARY} gazebo_msgs)
 # point forward.
 # NOTE: This is deprecated, should be using target_link_libraries instead
 link_libraries(mav_msgs)
+
+## Generate messages in the 'msg' folder
+add_message_files(
+  FILES
+  VuChunk.msg
+  VuInfo.msg
+)
+
+
+## Generate services in the 'srv' folder
+add_service_files(
+  DIRECTORY
+  srv
+)
+
+generate_messages(
+  DEPENDENCIES
+  std_msgs
+)
 
 # ============================================== #
 # ==================== CATKIN ================== #
@@ -308,6 +364,22 @@ if (NOT NO_ROS)
   add_dependencies(rotors_gazebo_gps_plugin ${catkin_EXPORTED_TARGETS})
 endif()
 list(APPEND targets_to_install rotors_gazebo_gps_plugin)
+
+#========================================= GIMBAL PLUGIN ===========================================//
+add_library(rotors_gazebo_gimbal_plugin SHARED src/gazebo_gimbal_plugin.cpp)
+target_link_libraries(rotors_gazebo_gimbal_plugin ${target_linking_LIBRARIES} )
+if (NOT NO_ROS)
+  add_dependencies(rotors_gazebo_gimbal_plugin ${catkin_EXPORTED_TARGETS})
+endif()
+list(APPEND targets_to_install rotors_gazebo_gimbal_plugin)
+
+#========================================= LEDDAR VU8 LIDAR PLUGIN ===========================================//
+add_library(rotors_gazebo_leddar_vu8_lidar_plugin SHARED src/gazebo_leddar_vu8_lidar_plugin.cpp)
+target_link_libraries(rotors_gazebo_leddar_vu8_lidar_plugin ${target_linking_LIBRARIES} )
+if (NOT NO_ROS)
+  add_dependencies(rotors_gazebo_leddar_vu8_lidar_plugin ${catkin_EXPORTED_TARGETS})
+endif()
+list(APPEND targets_to_install rotors_gazebo_leddar_vu8_lidar_plugin)
 
 #========================================= IMU PLUGIN ===========================================//
 add_library(rotors_gazebo_imu_plugin SHARED src/gazebo_imu_plugin.cpp)
