@@ -16,6 +16,7 @@ int main(int argc, char** argv)
   NodeHandle nh("");
 
   JoyTrjVelCntl joyTrajVelCon;
+  nh.getParam("/joystick_velocity_controller/name_cntl", joyTrajVelCon.strJoyCntlName);
 
   // Tell ROS how fast to run this node.
   Rate loopRate(100);

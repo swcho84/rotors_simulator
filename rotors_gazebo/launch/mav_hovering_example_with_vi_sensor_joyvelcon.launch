@@ -34,6 +34,10 @@
     <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" />
   </group>
 
-  <node name="joystick_velocity_controller" pkg="rotors_control" type="joy_trjvel_cntl_node" output="screen"/>
+  <node name="joystick_velocity_controller" pkg="rotors_control" type="joy_trjvel_cntl_node" output="screen">
+    <rosparam> <!-- controller option setup: wired xbox("xbox") or wireless ps4("ps4") -->
+      name_cntl: "ps4"
+    </rosparam>    
+  </node>
 
 </launch>
