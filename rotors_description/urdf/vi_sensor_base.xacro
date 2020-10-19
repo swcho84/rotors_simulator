@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <robot name="vi_sensor" xmlns:xacro="http://ros.org/wiki/xacro">
-  <xacro:property name="namespace" value="vi_sensor" />
+<!--  <xacro:property name="namespace" value="vi_sensor" />
   <xacro:include filename="$(find rotors_description)/urdf/component_snippets.xacro" />
 
   <link name="base_link">
@@ -13,7 +13,7 @@
     </collision>
 
     <visual>
-      <origin xyz="0 0 0" rpy="0 0 0" />
+      <origin xyz="0 0 0" rpy="0 0 0" />c
       <geometry>
         <box size="0.1 0.1 1.0" />
       </geometry>
@@ -28,12 +28,12 @@
   </link>
 
   <xacro:vi_sensor_macro
-    namespace="${namespace}"
-    parent_link="base_link"
+    namespace="${namespace}/base_link"
+    parent_link="${namespace}/gimbal_base_link"
     enable_cameras="$(arg enable_cameras)"
     enable_depth="$(arg enable_depth)"
     enable_ground_truth="$(arg enable_ground_truth)">
-    <origin xyz="0.0 0.0 0.8" rpy="0 0 0" />
-  </xacro:vi_sensor_macro>
+    <origin xyz="0.0 0.0 -0.030" rpy="0.0 1.570796 0.0" />  
+  </xacro:vi_sensor_macro> -->
 
 </robot>
