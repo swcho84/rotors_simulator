@@ -60,7 +60,7 @@
       <parent link="${robot_namespace}/base_link" />
       <child link="${robot_namespace}/gimbal_base_link" />
       <origin xyz="0 0 0" rpy="0 0 0" />
-      <axis xyz="0 1 0" />
+      <axis xyz="0 1.570796 0" />
     </joint>
     <gazebo>
       <plugin name="gimbal_controller_plugin" filename="librotors_gazebo_gimbal_plugin.so">
