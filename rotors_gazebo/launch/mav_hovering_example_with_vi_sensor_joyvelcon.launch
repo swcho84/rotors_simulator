@@ -36,7 +36,7 @@
 
   <node name="joystick_velocity_controller" pkg="rotors_control" type="joy_trjvel_cntl_node" output="screen">
     <rosparam> <!-- controller option setup: wired xbox("xbox") or wireless ps4("ps4") -->
-      name_cntl: "ps4"
+      name_cntl: "xbox"
     </rosparam>    
   </node>
 
