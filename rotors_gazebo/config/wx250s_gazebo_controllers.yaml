@@ -1,0 +1,28 @@
+# Publish all joint states
+# Creates the /joint_states topic necessary in ROS
+joint_state_controller:
+  type: joint_state_controller/JointStateController
+  publish_rate: 100
+
+arm_controller:
+  type: effort_controllers/JointTrajectoryController
+  joints:
+    - wx250s_waist
+    - wx250s_shoulder
+    - wx250s_elbow
+  gains: # Required because we're controlling an effort interface
+    wx250s_waist: {p: 0.2,  d: 0.05, i: 0.025}
+    wx250s_shoulder: {p: 0.2,  d: 0.05, i: 0.025}
+    wx250s_elbow: {p: 0.2,  d: 0.05, i: 0.025}
+
+  constraints:
+    goal_time: 0.2
+    wx250s_waist:
+      goal: 0.1
+      trajectory: 0.2
+    wx250s_shoulder:
+      goal: 0.2
+      trajectory: 0.2
+    wx250s_elbow:
+      goal: 0.2
+      trajectory: 0.2      
