@@ -6,14 +6,21 @@ joint_state_controller:
 
 arm_controller:
   type: effort_controllers/JointTrajectoryController
+  publish_rate: 100  
   joints:
     - wx250s_waist
     - wx250s_shoulder
     - wx250s_elbow
+    - wx250s_forearm_roll
+    - wx250s_wrist_angle
+    - wx250s_wrist_rotate
   gains: # Required because we're controlling an effort interface
     wx250s_waist: {p: 0.2,  d: 0.05, i: 0.025}
-    wx250s_shoulder: {p: 0.2,  d: 0.05, i: 0.025}
-    wx250s_elbow: {p: 0.2,  d: 0.05, i: 0.025}
+    wx250s_shoulder: {p: 1.0,  d: 0.2, i: 0.1}
+    wx250s_elbow: {p: 10.0,  d: 0.5, i: 0.5}
+    wx250s_forearm_roll: {p: 0.5,  d: 0.025, i: 0.025}
+    wx250s_wrist_angle: {p: 0.7,  d: 0.1, i: 0.05}
+    wx250s_wrist_rotate: {p: 1.0,  d: 0.1, i: 0.05}    
 
   constraints:
     goal_time: 0.2
@@ -25,4 +32,23 @@ arm_controller:
       trajectory: 0.2
     wx250s_elbow:
       goal: 0.2
-      trajectory: 0.2      
+      trajectory: 0.2
+    wx250s_forearm_roll:
+      goal: 0.2
+      trajectory: 0.2
+    wx250s_wrist_angle:
+      goal: 0.2
+      trajectory: 0.2
+    wx250s_wrist_rotate:
+      goal: 0.2
+      trajectory: 0.2
+
+gripper_controller:
+  type: effort_controllers/JointTrajectoryController
+  publish_rate: 100  
+  joints:
+    - wx250s_left_finger
+    - wx250s_right_finger
+  gains:
+    wx250s_left_finger: {p: 2.0,  d: 0.1, i: 0.05}
+    wx250s_right_finger: {p: 2.0,  d: 0.1, i: 0.05}

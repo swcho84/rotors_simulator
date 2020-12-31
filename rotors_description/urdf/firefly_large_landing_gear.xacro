@@ -140,15 +140,15 @@
 
   <link name="${namespace}_left_leg">
     <visual>
-      <origin xyz="${arm_length*0.013} ${arm_length*0.013} -0.17" rpy="0 0 0" />
+      <origin xyz="${arm_length*0.013} ${arm_length*0.013} -0.21" rpy="0 0 0" />
       <geometry>
-        <cylinder length="0.3" radius="0.005"/>
+        <cylinder length="0.4" radius="0.005"/>
       </geometry> 
     </visual>
     <collision>
-      <origin xyz="${arm_length*0.013} ${arm_length*0.013} -0.17" rpy="0 0 0" />
+      <origin xyz="${arm_length*0.013} ${arm_length*0.013} -0.21" rpy="0 0 0" />
       <geometry>
-        <cylinder length="0.3" radius="0.005"/>
+        <cylinder length="0.4" radius="0.005"/>
       </geometry> 
     </collision>
     <inertial>
@@ -188,15 +188,15 @@
 
   <link name="${namespace}_back_left_leg">
     <visual>
-      <origin xyz="-${cos30*arm_length*0.013} ${sin30*arm_length*0.013} -0.17" rpy="0 0 0" />
+      <origin xyz="-${cos30*arm_length*0.013} ${sin30*arm_length*0.013} -0.21" rpy="0 0 0" />
       <geometry>
-        <cylinder length="0.3" radius="0.005"/>
+        <cylinder length="0.4" radius="0.005"/>
       </geometry> 
     </visual>
     <collision>
-      <origin xyz="-${cos30*arm_length*0.013} ${sin30*arm_length*0.013} -0.17" rpy="0 0 0" />
+      <origin xyz="-${cos30*arm_length*0.013} ${sin30*arm_length*0.013} -0.21" rpy="0 0 0" />
       <geometry>
-        <cylinder length="0.3" radius="0.005"/>
+        <cylinder length="0.4" radius="0.005"/>
       </geometry> 
     </collision>
     <inertial>
@@ -235,15 +235,15 @@
 
   <link name="${namespace}_back_right_leg">
     <visual>
-      <origin xyz="-${cos30*arm_length*0.013} -${sin30*arm_length*0.013} -0.17" rpy="0 0 0" />
+      <origin xyz="-${cos30*arm_length*0.013} -${sin30*arm_length*0.013} -0.21" rpy="0 0 0" />
       <geometry>
-        <cylinder length="0.3" radius="0.005"/>
+        <cylinder length="0.4" radius="0.005"/>
       </geometry> 
     </visual>
     <collision>
-      <origin xyz="-${cos30*arm_length*0.013} -${sin30*arm_length*0.013} -0.17" rpy="0 0 0" />
+      <origin xyz="-${cos30*arm_length*0.013} -${sin30*arm_length*0.013} -0.21" rpy="0 0 0" />
       <geometry>
-        <cylinder length="0.3" radius="0.005"/>
+        <cylinder length="0.4" radius="0.005"/>
       </geometry> 
     </collision>
     <inertial>
@@ -283,15 +283,15 @@
 
   <link name="${namespace}_right_leg">
     <visual>
-      <origin xyz="${arm_length*0.013} -${arm_length*0.013} -0.17" rpy="0 0 0" />
+      <origin xyz="${arm_length*0.013} -${arm_length*0.013} -0.21" rpy="0 0 0" />
       <geometry>
-        <cylinder length="0.3" radius="0.005"/>
+        <cylinder length="0.4" radius="0.005"/>
       </geometry> 
     </visual>
     <collision>
-      <origin xyz="${arm_length*0.013} -${arm_length*0.013} -0.17" rpy="0 0 0" />
+      <origin xyz="${arm_length*0.013} -${arm_length*0.013} -0.21" rpy="0 0 0" />
       <geometry>
-        <cylinder length="0.3" radius="0.005"/>
+        <cylinder length="0.4" radius="0.005"/>
       </geometry> 
     </collision>
     <inertial>

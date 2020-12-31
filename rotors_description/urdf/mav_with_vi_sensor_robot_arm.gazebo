@@ -23,7 +23,7 @@
   <!-- Instantiate the mav with a generic odometry sensor. -->
   <xacro:include filename="$(find rotors_description)/urdf/mav_generic_odometry_sensor_manipulator.gazebo" />
 
-  <!-- Mount the default arm controller. -->  
+  <!-- Mount the default arm/joint/gripper controller. -->  
   <gazebo>
     <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
       <robotSimType>gazebo_ros_control/DefaultRobotHWSim</robotSimType>
@@ -31,10 +31,9 @@
     </plugin>
   </gazebo>  
 
-  <!-- Mount a VI-sensor in front of the Firefly. -->
-  <!-- Mount a VI-sensor downward the Firefly. -->  
+  <!-- Mount a VI-sensor, mounted under the Firefly. -->  
   <xacro:vi_sensor_macro
-    namespace="${namespace}/vi_sensor"
+    namespace="${namespace}/vi_sensor_downward"
     parent_link="${namespace}/gimbal_base_link"
     enable_cameras="true"
     enable_depth="true"
@@ -42,7 +41,7 @@
     <origin xyz="-0.0 0.0 -0.030" rpy="0.0 1.570796 0.0" />  
   </xacro:vi_sensor_macro>
 
-  <!-- leddartech vu8 Lidar -->
+  <!-- leddartech vu8 Lidar, mounted under the Firefly.  -->
   <xacro:lidar_leddar_vu8_macro
     namespace="${namespace}"
     lidar_name="${namespace}/vu8_lidar"
@@ -55,12 +54,22 @@
     <origin xyz="-0.030 0.0 -0.030" rpy="${pi} ${pi/2} 0" />
   </xacro:lidar_leddar_vu8_macro>  
 
-  <!-- 6DOF robot arm -->
+  <!-- 6DOF serialized robot manipulator  -->
   <xacro:wx250s_robot_arm
     namespace="${namespace}"
     parent_link="${namespace}/base_link"
     x_offset="0.1"
     z_offset="0.02"
   >
-  </xacro:wx250s_robot_arm>    
+  </xacro:wx250s_robot_arm>
+
+  <!-- Mount a VI-sensor, mounted on the end-effector -->  
+  <xacro:vi_sensor_macro
+    namespace="${namespace}/vi_sensor_arm"
+    parent_link="${namespace}/wx250s/ee_arm_link"
+    enable_cameras="true"
+    enable_depth="true"
+    enable_ground_truth="true">
+    <origin xyz="0.0 -0.085 0.05" rpy="0.0 0.0 -1.570796" />  
+  </xacro:vi_sensor_macro>  
 </robot>
