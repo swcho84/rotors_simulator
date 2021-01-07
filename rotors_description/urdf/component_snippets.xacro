@@ -40,7 +40,7 @@
   <!--///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// -->
   <!-- Macro to add wx250s robot arm. -->
   <xacro:macro name="wx250s_robot_arm" params="namespace parent_link x_offset z_offset">
-
+ 
     <!-- making the base joint for the manipulator  -->
     <joint name="fixed" type="fixed">
       <parent link="${parent_link}"/>

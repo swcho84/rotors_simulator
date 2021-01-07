@@ -42,6 +42,9 @@
   </node>
 
   <!-- for using 6DOF manipulator controller -->
+  <arg name="moveit_controller_manager" default="moveit_simple_controller_manager/MoveItSimpleControllerManager" />
+  <param name="moveit_controller_manager" value="$(arg moveit_controller_manager)"/>
+
   <rosparam file="$(find rotors_gazebo)/config/wx250s_gazebo_controllers.yaml" command="load" ns="firefly"/>
   <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false" output="screen" ns="firefly" args="gripper_controller arm_controller joint_state_controller"/>
   <node name="rostopic_pub_manipulator_init" pkg="rostopic" type="rostopic" 

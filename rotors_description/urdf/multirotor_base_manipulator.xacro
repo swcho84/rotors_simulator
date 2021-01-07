@@ -53,7 +53,6 @@
         <geometry>
           <cylinder radius="0.025" length="0.01"/>
         </geometry>
-        <material name="white"/>
       </visual>
     </link>
     <joint name="${robot_namespace}/gimbal_pitch_joint" type="continuous">
