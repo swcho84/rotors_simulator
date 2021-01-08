@@ -2,6 +2,7 @@
   <xacro:macro name="wx250s_arm">
 
     <group name="wx250s_arm">
+      <joint name="virtual_joint"/>
       <joint name="wx250s_waist" />
       <joint name="wx250s_shoulder"/>
       <joint name="wx250s_elbow" />
@@ -9,8 +10,6 @@
       <joint name="wx250s_wrist_angle"/>
       <joint name="wx250s_wrist_rotate"/>
     </group>
-
-    <virtual_joint name="virtual_joint" type="floating" parent_frame="world" child_link="firefly/base_link" />
 
     <group_state name="home" group="wx250s_arm">
       <joint name="wx250s_waist" value="0.0" />

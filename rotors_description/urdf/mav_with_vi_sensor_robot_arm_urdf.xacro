@@ -38,10 +38,11 @@
     <link name="firefly/base_link"/>
 
     <!-- making the base joint for the manipulator  -->
-    <joint name="fixed" type="fixed">
+    <joint name="virtual_joint" type="fixed">
       <parent link="firefly/base_link"/>
       <child link="firefly/wx250s/base_link"/>
     </joint>
+    
     <!-- making the base link for the manipulator, lower deck  -->
     <link name="firefly/wx250s/base_link">
       <visual>
