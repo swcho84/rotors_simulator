@@ -81,7 +81,8 @@
     <transmission name="wx250s_trans_waist">
       <type>transmission_interface/SimpleTransmission</type>
       <joint name="wx250s_waist">
-        <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+        <!-- <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface> -->
+        <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
       </joint>
       <actuator name="wx250s_waist_motor">
         <mechanicalReduction>1</mechanicalReduction>
@@ -122,7 +123,8 @@
     <transmission name="wx250s_trans_shoulder">
       <type>transmission_interface/SimpleTransmission</type>
       <joint name="wx250s_shoulder">
-        <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+        <!-- <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface> -->
+        <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
       </joint>
       <actuator name="wx250s_shoulder_motor">
         <mechanicalReduction>1</mechanicalReduction>
@@ -163,7 +165,8 @@
     <transmission name="wx250s_trans_elbow">
       <type>transmission_interface/SimpleTransmission</type>
       <joint name="wx250s_elbow">
-        <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+        <!-- <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface> -->
+        <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
       </joint>
       <actuator name="wx250s_elbow_motor">
         <mechanicalReduction>1</mechanicalReduction>
@@ -204,7 +207,8 @@
     <transmission name="wx250s_trans_forearm_roll">
       <type>transmission_interface/SimpleTransmission</type>
       <joint name="wx250s_forearm_roll">
-        <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+        <!-- <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface> -->
+        <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
       </joint>
       <actuator name="wx250s_forearm_roll_motor">
         <mechanicalReduction>1</mechanicalReduction>
@@ -245,7 +249,8 @@
     <transmission name="wx250s_trans_wrist_angle">
       <type>transmission_interface/SimpleTransmission</type>
       <joint name="wx250s_wrist_angle">
-        <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+        <!-- <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface> -->
+        <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
       </joint>
       <actuator name="wx250s_wrist_angle_motor">
         <mechanicalReduction>1</mechanicalReduction>
@@ -287,7 +292,8 @@
     <transmission name="wx250s_trans_wrist_rotate">
       <type>transmission_interface/SimpleTransmission</type>
       <joint name="wx250s_wrist_rotate">
-        <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+        <!-- <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface> -->
+        <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
       </joint>
       <actuator name="wx250s_wrist_rotate_motor">
         <mechanicalReduction>1</mechanicalReduction>
@@ -380,7 +386,8 @@
     <transmission name="wx250s_trans_left_finger">
       <type>transmission_interface/SimpleTransmission</type>
       <joint name="wx250s_left_finger">
-        <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+        <!-- <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface> -->
+        <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
       </joint>
       <actuator name="wx250s_left_finger_motor">
         <mechanicalReduction>1</mechanicalReduction>
@@ -419,7 +426,8 @@
     <transmission name="wx250s_trans_right_finger">
       <type>transmission_interface/SimpleTransmission</type>
       <joint name="wx250s_right_finger">
-        <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+        <!-- <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface> -->
+        <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
       </joint>
       <actuator name="wx250s_right_finger_motor">
         <mechanicalReduction>1</mechanicalReduction>
