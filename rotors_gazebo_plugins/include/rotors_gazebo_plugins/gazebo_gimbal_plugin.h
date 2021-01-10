@@ -40,8 +40,13 @@
 #include <ros/ros.h>
 
 #include <tf/transform_broadcaster.h>
+#include <tf/transform_listener.h>
 #include <std_msgs/Float32.h>
 #include <std_msgs/Float32MultiArray.h>
+
+#include <sensor_msgs/PointCloud.h>
+#include <sensor_msgs/PointCloud2.h>
+#include <sensor_msgs/point_cloud_conversion.h>
 
 #include "rotors_gazebo_plugins/SetFloat32.h"
 
@@ -78,9 +83,14 @@ private:
 
   ros::ServiceServer srvGimbalPitchCmd_;
   ros::Publisher pubGimbalInfo_;
+  ros::Publisher pubStabilizedPointCloud2_;
+  ros::Subscriber subRawPointCloud2_;
 
   bool SrvServerCallback(rotors_gazebo_plugins::SetFloat32Request &req, rotors_gazebo_plugins::SetFloat32Response &resp);
   void PublishGimbalInfo(double pitch);
+  void CbPointCloud2(const sensor_msgs::PointCloud2ConstPtr& input);
+ 
+  sensor_msgs::PointCloud ptCloudInput_;
 };
 } // namespace gazebo
 #endif

@@ -53,6 +53,9 @@ void BottomGimbalPlugin::Load(physics::ModelPtr model, sdf::ElementPtr sdf)
   ros::NodeHandle nh;
   srvGimbalPitchCmd_ = nh.advertiseService("/firefly/gimbal/set/pitch_cmd", &BottomGimbalPlugin::SrvServerCallback, this);  
   pubGimbalInfo_ = nh.advertise<std_msgs::Float32MultiArray>("/firefly/bottom_gimbal/attitude", 1);  
+
+  subRawPointCloud2_ = nh.subscribe ("/firefly/vi_sensor/camera_depth/depth/points", 1, &BottomGimbalPlugin::CbPointCloud2, this);
+  pubStabilizedPointCloud2_ = nh.advertise<sensor_msgs::PointCloud2> ("/firefly/vi_sensor/camera_depth/depth/points_stabilized", 1);
 }
 
 void BottomGimbalPlugin::OnUpdate(const common::UpdateInfo  &_info)
@@ -78,6 +81,33 @@ void BottomGimbalPlugin::OnUpdate(const common::UpdateInfo  &_info)
   linkPitch_->SetWorldPose(originAngle);
   linkPitch_->SetForce(originForce);
 
+  // calculating stabilized pointcloud
+/*
+  static tf::TransformBroadcaster br;
+  tf::Transform transform;
+  tf::Quaternion q;
+  q.setRPY(0.0, 0.0, baseLinkPose.Rot().Yaw());
+  transform.setRotation(q);
+  br.sendTransform(tf::StampedTransform(transform, ros::Time::now(), "/firefly/gimbal_base_link", "/world"));
+
+  sensor_msgs::PointCloud ptCloudOutput;
+  for(size_t i = 0;i < ptCloudInput_.points.size();i++)
+  {
+    geometry_msgs::Point32 point = ptCloudInput_.points.at(i);
+    tf::Vector3 vecRawPt(point.x,point.y,point.z);
+    tf::Vector3 vecResPt = (transform) * (vecRawPt);
+    geometry_msgs::Point32 T_point;
+    T_point.x = vecResPt.getX();
+    T_point.y = vecResPt.getY();
+    T_point.z = vecResPt.getZ();
+    ptCloudOutput.points.push_back(T_point);
+  }
+
+	// publishing stabilized pointcloud2
+  sensor_msgs::PointCloud2 ptCloud2Res;
+  sensor_msgs::convertPointCloudToPointCloud2(ptCloudOutput, ptCloud2Res);
+  pubStabilizedPointCloud2_.publish(ptCloud2Res);
+*/
   PublishGimbalInfo(dPitchCmd_);
 }
 
@@ -96,6 +126,11 @@ void BottomGimbalPlugin::PublishGimbalInfo(double pitch)
   msgGimbalInfo.data[1] = (float)(pitch);
   msgGimbalInfo.data[2] = 0.0;  // not used, just use the vehicle`s heading
   pubGimbalInfo_.publish(msgGimbalInfo);
+}
+
+void BottomGimbalPlugin::CbPointCloud2(const sensor_msgs::PointCloud2ConstPtr& ptCloud2Raw)
+{
+  //sensor_msgs::convertPointCloud2ToPointCloud(*ptCloud2Raw, ptCloudInput_);
 }
 
 GZ_REGISTER_MODEL_PLUGIN(BottomGimbalPlugin);

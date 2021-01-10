@@ -126,42 +126,93 @@ void JoyTrjVelCntl::GenJoyConInfo()
 
 void JoyTrjVelCntl::CbJoyInfo(const sensor_msgs::JoyConstPtr& msg)
 {
-  // 0: yaw, 1: XbVel, 2: YbVel, 3: ZbVel
-  joyPose_(0) = (msg->axes[YAWAXIS]) * (YAWAXISDIR);
-  joyPose_(1) = (msg->axes[XNAXIS]) * (XNAXISDIR);
-  joyPose_(2) = (msg->axes[YEAXIS]) * (YEAXISDIR);
-  joyPose_(3) = (msg->axes[ZDAxis]) * (ZDAXISDIR);
+  if (strJoyCntlName == "xbox")
+  {
+    // 0: yaw, 1: XbVel, 2: YbVel, 3: ZbVel
+    joyPose_(0) = (msg->axes[YAWAXIS]) * (YAWAXISDIR);
+    joyPose_(1) = (msg->axes[XNAXIS]) * (XNAXISDIR);
+    joyPose_(2) = (msg->axes[YEAXIS]) * (YEAXISDIR);
+    joyPose_(3) = (msg->axes[ZDAxis]) * (ZDAXISDIR);
 
-  // using button A, B, X w.r.t xbox360
-  if ((msg->buttons[0] == 1) && (msg->buttons[1] == 0))
-  {
-    // using joystick control input
-    bCurrUseJoyConLoop_ = true;
-    bCurrUseExtGuidLoop_ = false;    
+    // using button A, B, X w.r.t xbox360
+    if ((msg->buttons[0] == 1) && (msg->buttons[1] == 0))
+    {
+      // using joystick control input
+      bCurrUseJoyConLoop_ = true;
+      bCurrUseExtGuidLoop_ = false;    
+    }
+    else if ((msg->buttons[0] == 0) && (msg->buttons[1] == 1))
+    {
+      // using guidance control input
+      bCurrUseJoyConLoop_ = false;
+      bCurrUseExtGuidLoop_ = true;  
+    }
+    else
+    {
+      // staying the flag type
+      bCurrUseJoyConLoop_ = bPrevUseJoyConLoop_;
+      bCurrUseExtGuidLoop_ = bPrevUseExtGuidLoop_;
+      
+      // off the external input, just hovering
+      if (msg->buttons[2] == 1)
+      {
+        bCurrUseJoyConLoop_ = false;
+        bCurrUseExtGuidLoop_ = false;        
+      }    
+    }
+    
+    // saving the previous data
+    bPrevUseJoyConLoop_ = bCurrUseJoyConLoop_;
+    bPrevUseExtGuidLoop_ = bCurrUseExtGuidLoop_;
   }
-  else if ((msg->buttons[0] == 0) && (msg->buttons[1] == 1))
+  else if (strJoyCntlName == "ps4")
   {
-    // using guidance control input
-    bCurrUseJoyConLoop_ = false;
-    bCurrUseExtGuidLoop_ = true;  
+    // 0: yaw, 1: XbVel, 2: YbVel, 3: ZbVel
+    joyPose_(0) = (msg->axes[YAWAXIS]) * (YAWAXISDIR);
+    joyPose_(1) = (msg->axes[XNAXIS]) * (XNAXISDIR);
+    joyPose_(2) = (msg->axes[YEAXIS]) * (YEAXISDIR);
+
+    // for using ps4
+    joyPose_(3) = (msg->axes[5]) * (ZDAXISDIR);
+
+    // using button A, B, X w.r.t xbox360
+    if ((msg->buttons[1] == 1) && (msg->buttons[2] == 0))
+    {
+      // using joystick control input
+      bCurrUseJoyConLoop_ = true;
+      bCurrUseExtGuidLoop_ = false;    
+    }
+    else if ((msg->buttons[1] == 0) && (msg->buttons[2] == 1))
+    {
+      // using guidance control input
+      bCurrUseJoyConLoop_ = false;
+      bCurrUseExtGuidLoop_ = true;  
+    }
+    else
+    {
+      // staying the flag type
+      bCurrUseJoyConLoop_ = bPrevUseJoyConLoop_;
+      bCurrUseExtGuidLoop_ = bPrevUseExtGuidLoop_;
+      
+      // off the external input, just hovering
+      if (msg->buttons[0] == 1)
+      {
+        bCurrUseJoyConLoop_ = false;
+        bCurrUseExtGuidLoop_ = false;        
+      }    
+    }
+    
+    // saving the previous data
+    bPrevUseJoyConLoop_ = bCurrUseJoyConLoop_;
+    bPrevUseExtGuidLoop_ = bCurrUseExtGuidLoop_;    
+
   }
   else
   {
-    // staying the flag type
-    bCurrUseJoyConLoop_ = bPrevUseJoyConLoop_;
-    bCurrUseExtGuidLoop_ = bPrevUseExtGuidLoop_;
-    
-    // off the external input, just hovering
-    if (msg->buttons[2] == 1)
-    {
-      bCurrUseJoyConLoop_ = false;
-      bCurrUseExtGuidLoop_ = false;        
-    }    
+    // false: controller
+    ROS_INFO_DELAYED_THROTTLE(5, "Please setup and check the controller..");
   }
   
-  // saving the previous data
-  bPrevUseJoyConLoop_ = bCurrUseJoyConLoop_;
-  bPrevUseExtGuidLoop_ = bCurrUseExtGuidLoop_;
 }
 
 void JoyTrjVelCntl::CbPoseInfo(const geometry_msgs::PoseConstPtr& msg) 

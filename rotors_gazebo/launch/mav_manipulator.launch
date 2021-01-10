@@ -1,7 +1,7 @@
 <launch>
   <env name="ROSCONSOLE_CONFIG_FILE" value="$(find rotors_control)/rosconsole.config"/>
   <arg name="mav_name" default="firefly"/>
-  <arg name="world_name" default="riverside"/>  <!-- basic -->
+  <arg name="world_name" default="empty"/>  <!-- basic -->
   <arg name="enable_logging" default="false" />
   <arg name="enable_ground_truth" default="true" />
   <arg name="log_file" default="$(arg mav_name)" />
@@ -17,9 +17,9 @@
   </include>
 
   <group ns="$(arg mav_name)">
-    <include file="$(find rotors_gazebo)/launch/spawn_mav.launch">
+    <include file="$(find rotors_gazebo)/launch/spawn_mav_manipulator.launch">
       <arg name="mav_name" value="$(arg mav_name)" />
-      <arg name="model" value="$(find rotors_description)/urdf/mav_with_vi_sensor.gazebo" />
+      <arg name="model" value="$(find rotors_description)/urdf/mav_with_vi_sensor_robot_arm.gazebo" />
       <arg name="enable_logging" value="$(arg enable_logging)" />
       <arg name="enable_ground_truth" value="$(arg enable_ground_truth)" />
       <arg name="log_file" value="$(arg log_file)"/>
@@ -41,12 +41,40 @@
     </rosparam>    
   </node>
 
+  <!-- for using 6DOF manipulator controller -->
+  <arg name="moveit_controller_manager" default="moveit_simple_controller_manager/MoveItSimpleControllerManager" />
+  <param name="moveit_controller_manager" value="$(arg moveit_controller_manager)"/>
+
+  <rosparam file="$(find rotors_gazebo)/config/wx250s_gazebo_controllers.yaml" command="load" ns="firefly"/>
+  <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false" output="screen" ns="firefly" args="gripper_controller arm_controller joint_state_controller"/>
+  <node name="rostopic_pub_manipulator_init" pkg="rostopic" type="rostopic" 
+        args="pub /firefly/arm_controller/command trajectory_msgs/JointTrajectory 
+              '{header: {seq: 0, stamp: {secs: 0, nsecs: 0}, frame_id: ''},
+              joint_names: [wx250s_waist, wx250s_shoulder, wx250s_elbow, wx250s_forearm_roll, wx250s_wrist_angle, wx250s_wrist_rotate],
+              points: [{positions: [0.0, -1.25, 1.25, 0.0, 0.0, 0.0], time_from_start: {secs: 1, nsecs: 0}}]}'"/>
+  <node name="rostopic_pub_gripper_init" pkg="rostopic" type="rostopic" 
+        args="pub /firefly/gripper_controller/command trajectory_msgs/JointTrajectory 
+              '{header: {seq: 0, stamp: {secs: 0, nsecs: 0}, frame_id: ''},
+              joint_names: [wx250s_left_finger, wx250s_right_finger],
+              points: [{positions: [0.0, 0.0],   velocities: [0.0, 0.0], accelerations: [0.0, 0.0], effort: [0.0, 0.0], time_from_start: {secs: 1, nsecs: 0}}]}'"/>
+
+  <!-- image rectification -->
+  <node name="firefly_downward_image_proc" pkg="image_proc" type="image_proc" ns="firefly_downward">
+    <remap from="image_raw" to="/firefly/firefly/vi_sensor_downward/vi_sensor/left/image_raw"/>  
+    <remap from="camera_info" to="/firefly/firefly/vi_sensor_downward/vi_sensor/left/camera_info"/>
+  </node>
+  <node name="firefly_arm_image_proc" pkg="image_proc" type="image_proc" ns="firefly_arm">
+    <remap from="image_raw" to="/firefly/firefly/vi_sensor_arm/vi_sensor/left/image_raw"/>  
+    <remap from="camera_info" to="/firefly/firefly/vi_sensor_arm/vi_sensor/left/camera_info"/>
+    <remap from="/firefly/image_rect" to="/firefly/firefly/vi_sensor_arm/vi_sensor/left/image_rect"/>
+  </node>    
+
   <node pkg="nodelet" type="nodelet" name="pcl_manager_stabilized" args="manager" output="screen" />
 
   <!-- Run a VoxelGrid filter to clean NaNs and downsample the data -->
   <node pkg="nodelet" type="nodelet" name="voxel_grid_stabilized" args="load pcl/VoxelGrid pcl_manager_stabilized" output="screen">
-    <remap from="~input" to="/firefly/vi_sensor/camera_depth/depth/points" />
-    <remap from="~output" to="/firefly/vi_sensor/camera_depth/depth/points_filtered" />
+    <remap from="~input" to="/firefly/vi_sensor_downward/camera_depth/depth/points" />
+    <remap from="~output" to="/firefly/vi_sensor_downward/camera_depth/depth/points_filtered" />
     <rosparam>
       filter_field_name: z
       filter_limit_min: 0.00
@@ -60,7 +88,7 @@
   <node pkg="nodelet" type="nodelet" name="test_nodelet"  args="manager" output="screen"/>
   <node pkg="nodelet" type="nodelet" name="pointcloud_transformer" args="load transform_pointcloud/transformPointcloud test_nodelet" output="screen">
     <param name="to_frame" value="/firefly/gimbal_base_link"/>
-    <remap from="~input_pcl2" to="/firefly/vi_sensor/camera_depth/depth/points_filtered"/>
+    <remap from="~input_pcl2" to="/firefly/vi_sensor_downward/camera_depth/depth/points_filtered"/>
   </node>
 
   <!-- for using octomap -->
@@ -90,12 +118,6 @@
       filter_limit_negative: False
       leaf_size: 0.5
     </rosparam>
-  </node>  
-
-  <!-- image rectification -->
-  <node name="firefly_image_proc" pkg="image_proc" type="image_proc" ns="firefly">
-    <remap from="image_raw" to="/firefly/vi_sensor/left/image_raw"/>  
-    <remap from="camera_info" to="/firefly/vi_sensor/left/camera_info"/>
   </node>  
 
 	<!-- <node pkg="octomap_server" type="octomap_tracking_server_node" name="octomap_listener" output="screen">

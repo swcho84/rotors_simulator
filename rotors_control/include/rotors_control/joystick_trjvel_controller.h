@@ -81,6 +81,8 @@ public:
 
   void MainLoop();
 
+  string strJoyCntlName;  
+
 private:
   NodeHandle nh_;
 
@@ -90,7 +92,7 @@ private:
   bool bCurrUseJoyConLoop_;
   bool bCurrUseExtGuidLoop_;
   bool bPrevUseJoyConLoop_;
-  bool bPrevUseExtGuidLoop_;  
+  bool bPrevUseExtGuidLoop_;
 
   Subscriber subPoseInfo_;
   void CbPoseInfo(const geometry_msgs::PoseConstPtr& msg);
