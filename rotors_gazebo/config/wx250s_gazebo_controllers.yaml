@@ -1,0 +1,106 @@
+# Simulation settings for using moveit_sim_controllers
+moveit_sim_hw_interface:
+  joint_model_group: wx250s_arm
+  joint_model_group_pose: home
+
+# Settings for ros_control_boilerplate control loop
+generic_hw_control_loop:
+  loop_hz: 400
+  cycle_time_error_threshold: 0.01
+
+# Settings for ros_control hardware interface
+hardware_interface:
+  joints:
+    - wx250s_waist
+    - wx250s_shoulder
+    - wx250s_elbow
+    - wx250s_forearm_roll
+    - wx250s_wrist_angle
+    - wx250s_wrist_rotate
+  sim_control_mode: 0  # 0: position, 1: velocity
+
+arm_controller:
+  type: position_controllers/JointTrajectoryController  
+  publish_rate: 100  
+  joints:
+    - wx250s_waist
+    - wx250s_shoulder
+    - wx250s_elbow
+    - wx250s_forearm_roll
+    - wx250s_wrist_angle
+    - wx250s_wrist_rotate
+  gains: # Required because we're controlling an effort interface
+    wx250s_waist: {p: 0.2,  d: 0.05, i: 0.025, i_clamp: 1.0}
+    wx250s_shoulder: {p: 1.0,  d: 0.2, i: 0.1, i_clamp: 1.0}
+    wx250s_elbow: {p: 10.0,  d: 0.5, i: 0.5, i_clamp: 1.0}
+    wx250s_forearm_roll: {p: 0.5,  d: 0.05, i: 0.035, i_clamp: 0.5}
+    wx250s_wrist_angle: {p: 0.5,  d: 0.05, i: 0.035, i_clamp: 1.0}
+    wx250s_wrist_rotate: {p: 0.5,  d: 0.05, i: 0.035, i_clamp: 1.0}    
+  constraints:
+    goal_time: 0.2
+    wx250s_waist:
+      goal: 0.1
+      trajectory: 0.2
+    wx250s_shoulder:
+      goal: 0.2
+      trajectory: 0.2
+    wx250s_elbow:
+      goal: 0.2
+      trajectory: 0.2
+    wx250s_forearm_roll:
+      goal: 0.2
+      trajectory: 0.2
+    wx250s_wrist_angle:
+      goal: 0.2
+      trajectory: 0.2
+    wx250s_wrist_rotate:
+      goal: 0.2
+      trajectory: 0.2
+
+gripper_controller:
+  type: position_controllers/JointTrajectoryController
+  publish_rate: 100  
+  joints:
+    - wx250s_left_finger
+    - wx250s_right_finger
+  gains:
+    wx250s_left_finger: {p: 5.0,  d: 0.1, i: 0.05, i_clamp: 1.0}
+    wx250s_right_finger: {p: 5.0,  d: 0.1, i: 0.05, i_clamp: 1.0}
+  constraints:
+    goal_time: 0.2
+    wx250s_left_finger:
+      goal: 0.1
+      trajectory: 0.2
+    wx250s_right_finger:
+      goal: 0.2
+      trajectory: 0.2
+initial:  # Define initial robot poses.
+  - group: wx250s
+    pose: home
+
+# Publish all joint states
+# Creates the /joint_states topic necessary in ROS
+joint_state_controller:
+  type: joint_state_controller/JointStateController
+  publish_rate: 100
+
+# for using forward kinematics in moveit pkg
+controller_list:
+  - name: /firefly/arm_controller
+    action_ns: follow_joint_trajectory
+    type: FollowJointTrajectory
+    default: true
+    joints:
+      - wx250s_waist
+      - wx250s_shoulder
+      - wx250s_elbow
+      - wx250s_forearm_roll
+      - wx250s_wrist_angle
+      - wx250s_wrist_rotate
+  - name: /firefly/gripper_controller
+    action_ns: follow_joint_trajectory
+    type: FollowJointTrajectory
+    default: true
+    joints:
+    - wx250s_left_finger
+    - wx250s_right_finger
