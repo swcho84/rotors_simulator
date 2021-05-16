@@ -97,6 +97,8 @@ void LeePositionController::ComputeDesiredAcceleration(Eigen::Vector3d* accelera
   // original: error dynamics, position error
   Eigen::Vector3d position_error;
   // position_error = odometry_.position - command_trajectory_.position_W;
+
+  // converting the relative position error
   position_error(0) = 0.0;
   position_error(1) = 0.0;
   position_error(2) = odometry_.position(2) - command_trajectory_.position_W(2);

@@ -1,7 +1,7 @@
 <launch>
   <env name="ROSCONSOLE_CONFIG_FILE" value="$(find rotors_control)/rosconsole.config"/>
   <arg name="mav_name" default="firefly"/>
-  <arg name="world_name" default="riverside"/>  <!-- basic -->
+  <arg name="world_name" default="riverside"/>  <!-- basic riverside winding_valley_heightmap -->
   <arg name="enable_logging" default="false" />
   <arg name="enable_ground_truth" default="true" />
   <arg name="log_file" default="$(arg mav_name)" />
@@ -35,6 +35,11 @@
   </group>
 
   <!-- for using joystick controller -->
+  <node name="joy_node" pkg="joy" type="joy_node" respawn="true" output="screen">
+    <param name="dev" type="string" value="/dev/input/js1" />
+    <param name="deadzone" value="0.0" />
+  </node>
+
   <node name="joystick_velocity_controller" pkg="rotors_control" type="joy_trjvel_cntl_node" output="screen">
     <rosparam> <!-- controller option setup: wired xbox("xbox") or wireless ps4("ps4") -->
       name_cntl: "xbox"
@@ -94,8 +99,8 @@
 
   <!-- image rectification -->
   <node name="firefly_image_proc" pkg="image_proc" type="image_proc" ns="firefly">
-    <remap from="image_raw" to="/firefly/vi_sensor/left/image_raw"/>  
-    <remap from="camera_info" to="/firefly/vi_sensor/left/camera_info"/>
+    <remap from="image_raw" to="/firefly/firefly/vi_sensor/vi_sensor/left/image_raw"/>  
+    <remap from="camera_info" to="/firefly/firefly/vi_sensor/vi_sensor/left/camera_info"/>
   </node>  
 
 	<!-- <node pkg="octomap_server" type="octomap_tracking_server_node" name="octomap_listener" output="screen">
